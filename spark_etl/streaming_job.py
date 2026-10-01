@@ -24,8 +24,11 @@ from cassandra.query import SimpleStatement
 
 # ── Configuration (injected via Docker env vars) ───────────
 SPARK_MASTER = os.getenv("SPARK_MASTER_URL", "spark://spark-master:7077")
-SIMULATOR_HOST = os.getenv("SIMULATOR_HOST", "iot-simulator")
-SIMULATOR_PORT = int(os.getenv("SIMULATOR_PORT", 9999))
+import urllib.parse
+simulator_url = os.getenv("IOT_SIMULATOR_URL", "tcp://iot-simulator:9999")
+parsed_url = urllib.parse.urlparse(simulator_url)
+SIMULATOR_HOST = parsed_url.hostname or "iot-simulator"
+SIMULATOR_PORT = parsed_url.port or 9999
 SCYLLA_HOST = os.getenv("SCYLLA_HOST", "scylladb")
 SCYLLA_PORT = os.getenv("SCYLLA_PORT", "9042")
 SCYLLA_KEYSPACE = os.getenv("SCYLLA_KEYSPACE", "iot_maintenance")

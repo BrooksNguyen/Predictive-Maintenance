@@ -1,26 +1,40 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "services": {
-    "landing": {
-      "root": "landing",
-      "framework": "static"
-    },
     "dashboard": {
       "root": "dashboard",
       "runtime": "python"
+    },
+    "iot_simulator": {
+      "root": "iot_simulator",
+      "runtime": "python"
+    },
+    "ml_service": {
+      "root": "ml_service",
+      "runtime": "python"
+    },
+    "ml_training": {
+      "root": "ml_training",
+      "runtime": "python"
+    },
+    "spark_etl": {
+      "root": "spark_etl",
+      "runtime": "python",
+      "bindings": [
+        {
+          "type": "service",
+          "service": "iot_simulator",
+          "format": "url",
+          "env": "IOT_SIMULATOR_URL"
+        }
+      ]
     }
   },
   "rewrites": [
     {
-      "source": "/demo/(.*)",
-      "destination": {
-        "service": "dashboard"
-      }
-    },
-    {
       "source": "/(.*)",
       "destination": {
-        "service": "landing"
+        "service": "dashboard"
       }
     }
   ]
