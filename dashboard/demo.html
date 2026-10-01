@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Demo | Predictive Maintenance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        metal: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    },
+                    animation: {
+                        'blink': 'blink 1s step-end infinite',
+                    },
+                    keyframes: {
+                        blink: {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0 },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+        .metallic-border {
+            border: 1px solid #334155;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        .metallic-surface {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+        }
+        .log-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        .log-container::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        
+        /* CSS Chart Bars */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 100%;
+        }
+        .bar {
+            flex-grow: 1;
+            background-color: #64748b;
+            min-height: 10%;
+            transition: height 0.3s ease;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen p-4 md:p-8 flex flex-col h-screen overflow-hidden">
+    
+    <!-- Top Nav -->
+    <header class="flex items-center justify-between pb-6 border-b border-slate-800 mb-6 shrink-0">
+        <div class="flex items-center gap-4">
+            <a href="/" class="px-3 py-1.5 rounded metallic-border metallic-surface text-xs font-mono hover:bg-slate-800 transition-colors">
+                ← BACK
+            </a>
+            <h1 class="text-xl font-bold tracking-tight">ENGINE MONITORING HUB</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="text-xs font-mono text-slate-400">STATUS:</span>
+            <div class="inline-flex items-center gap-2 px-2 py-1 rounded metallic-border bg-green-950/30 text-xs font-mono text-green-400">
+                <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                LIVE STREAMING
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow min-h-0">
+        
+        <!-- Left Col: RUL & Machine Info -->
+        <div class="flex flex-col gap-6">
+            <div class="metallic-surface metallic-border rounded-lg p-6 flex-grow flex flex-col justify-center items-center relative overflow-hidden">
+                <h2 class="absolute top-4 left-4 text-xs font-mono text-slate-400">RUL PREDICTOR (XGBOOST)</h2>
+                
+                <div class="text-center mt-6">
+                    <div class="text-6xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-slate-500 mb-2" id="rul-value">
+                        112
+                    </div>
+                    <div class="text-sm font-mono text-slate-400">CYCLES REMAINING</div>
+                </div>
+
+                <div class="w-full mt-10">
+                    <div class="flex justify-between text-xs font-mono text-slate-500 mb-2">
+                        <span>CRITICAL</span>
+                        <span>HEALTHY</span>
+                    </div>
+                    <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                        <div id="rul-bar" class="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 w-11/12 transition-all duration-1000"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metallic-surface metallic-border rounded-lg p-6 shrink-0 h-48">
+                <h2 class="text-xs font-mono text-slate-400 mb-4">MACHINE SPECS</h2>
+                <ul class="space-y-3 text-sm font-mono text-slate-300">
+                    <li class="flex justify-between border-b border-slate-800 pb-2">
+                        <span class="text-slate-500">ENGINE ID</span> <span>FD001-ENG1</span>
+                    </li>
+                    <li class="flex justify-between border-b border-slate-800 pb-2">
+                        <span class="text-slate-500">ACTIVE CYCLE</span> <span id="cycle-count">24</span>
+                    </li>
+                    <li class="flex justify-between border-b border-slate-800 pb-2">
+                        <span class="text-slate-500">MODEL</span> <span>XGBRegressor (V1)</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Middle Col: Live Telemetry Logs -->
+        <div class="metallic-surface metallic-border rounded-lg flex flex-col overflow-hidden">
+            <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                <h2 class="text-xs font-mono text-slate-400">RAW TELEMETRY INGESTION (TCP PORT 9999)</h2>
+            </div>
+            <div class="p-4 font-mono text-xs text-slate-400 flex-grow overflow-y-auto log-container space-y-1" id="log-container">
+                <!-- Logs generated by JS -->
+            </div>
+        </div>
+
+        <!-- Right Col: Feature Visualizations -->
+        <div class="flex flex-col gap-6">
+            
+            <div class="metallic-surface metallic-border rounded-lg p-4 flex-grow flex flex-col">
+                <h2 class="text-xs font-mono text-slate-400 mb-4">SENSOR 2: LPC OUTLET TEMP (ROLLING MEAN)</h2>
+                <div class="bar-chart flex-grow" id="chart-1">
+                    <!-- Bars -->
+                </div>
+            </div>
+
+            <div class="metallic-surface metallic-border rounded-lg p-4 flex-grow flex flex-col">
+                <h2 class="text-xs font-mono text-slate-400 mb-4">SENSOR 7: HPC OUTLET PRESSURE</h2>
+                <div class="bar-chart flex-grow" id="chart-2">
+                    <!-- Bars -->
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        // Simulate real-time dashboard behavior
+        const logContainer = document.getElementById('log-container');
+        const rulValue = document.getElementById('rul-value');
+        const rulBar = document.getElementById('rul-bar');
+        const cycleCount = document.getElementById('cycle-count');
+        const chart1 = document.getElementById('chart-1');
+        const chart2 = document.getElementById('chart-2');
+
+        let cycle = 24;
+        let rul = 112;
+
+        // Initialize charts
+        for (let i = 0; i < 20; i++) {
+            chart1.innerHTML += `<div class="bar" style="height: ${Math.random() * 50 + 20}%"></div>`;
+            chart2.innerHTML += `<div class="bar" style="height: ${Math.random() * 40 + 30}%"></div>`;
+        }
+
+        function updateTelemetry() {
+            // Logs
+            cycle++;
+            const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
+            const s2 = (641.0 + Math.random() * 2).toFixed(2);
+            const s3 = (1580.0 + Math.random() * 10).toFixed(2);
+            const s4 = (1400.0 + Math.random() * 15).toFixed(2);
+            
+            const logLine = document.createElement('div');
+            logLine.innerHTML = `<span class="text-blue-400">[${timestamp}]</span> <span>RECV:</span> <span class="text-slate-300">{"eng":1,"cycle":${cycle},"s2":${s2},"s3":${s3},"s4":${s4}}</span>`;
+            
+            logContainer.appendChild(logLine);
+            if (logContainer.children.length > 50) logContainer.removeChild(logContainer.firstChild);
+            logContainer.scrollTop = logContainer.scrollHeight;
+
+            cycleCount.innerText = cycle;
+
+            // RUL drops slightly over time
+            if (Math.random() > 0.7 && rul > 10) {
+                rul -= 1;
+                rulValue.innerText = rul;
+                rulBar.style.width = \`\${(rul / 130) * 100}%\`;
+            }
+
+            // Update charts
+            updateChart(chart1, 20, 70);
+            updateChart(chart2, 30, 60);
+        }
+
+        function updateChart(chart, min, max) {
+            chart.removeChild(chart.firstChild);
+            const newBar = document.createElement('div');
+            newBar.className = 'bar';
+            newBar.style.height = \`\${Math.random() * max + min}%\`;
+            chart.appendChild(newBar);
+        }
+
+        // Run simulation
+        setInterval(updateTelemetry, 400);
+    </script>
+</body>
+</html>
