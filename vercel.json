@@ -4,27 +4,27 @@
     "dashboard": {
       "root": "dashboard",
       "runtime": "python",
-      "entrypoint": "dashboard/app.py"
+      "entrypoint": "app.py"
     },
     "iot_simulator": {
       "root": "iot_simulator",
       "runtime": "python",
-      "entrypoint": "iot_simulator/simulator.py"
+      "entrypoint": "simulator.py"
     },
     "ml_service": {
       "root": "ml_service",
       "runtime": "python",
-      "entrypoint": "ml_service/inference.py"
+      "entrypoint": "inference.py"
     },
     "ml_training": {
       "root": "ml_training",
       "runtime": "python",
-      "entrypoint": "ml_training/train_rul_model.py"
+      "entrypoint": "train_rul_model.py"
     },
     "spark_etl": {
       "root": "spark_etl",
       "runtime": "python",
-      "entrypoint": "spark_etl/streaming_job.py",
+      "entrypoint": "streaming_job.py",
       "bindings": [
         {
           "type": "service",
