@@ -3,39 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictive Maintenance Engine</title>
+    <title>Predictive Maintenance</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Inter', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        metal: {
-                            100: '#f1f5f9',
-                            200: '#e2e8f0',
-                            300: '#cbd5e1',
-                            400: '#94a3b8',
-                            500: '#64748b',
-                            600: '#475569',
-                            700: '#334155',
-                            800: '#1e293b',
-                            900: '#0f172a',
-                        },
-                        pure: '#000000',
+                        base: '#050505', // Deepest black
+                        surface: '#0f0e0d', // Brown-black
+                        surface2: '#1a1816', // Lighter brown-black
+                        edge: '#2d2926', // Metallic brown edge
+                        silver: '#e5e5ea',
+                        copper: '#b5937a', // Metallic brown/copper highlight
                     },
                     animation: {
-                        'spin-slow': 'spin 8s linear infinite',
-                        'flow': 'flow 2s linear infinite',
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                        'slide-up': 'slideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     },
                     keyframes: {
-                        flow: {
-                            '0%': { transform: 'translateX(-100%)' },
-                            '100%': { transform: 'translateX(100%)' },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
                         }
                     }
                 }
@@ -44,144 +42,242 @@
     </script>
     <style>
         body {
-            background-color: #0f172a; /* Slate 900 */
-            color: #f1f5f9;
+            background-color: theme('colors.base');
+            color: theme('colors.silver');
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .metallic-border {
-            border: 1px solid #475569;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        
+        .apple-glass {
+            background: rgba(26, 24, 22, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(181, 147, 122, 0.15); /* Subtle copper edge */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        .metallic-surface {
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-        }
-        .metallic-text {
-            background: linear-gradient(to right, #e2e8f0, #94a3b8);
+
+        .text-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, #b5937a 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
-        .progress-line {
-            height: 2px;
-            background: #334155;
-            position: relative;
-            overflow: hidden;
-            border-radius: 2px;
+
+        /* Satisfying Chart Bars */
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 120px;
         }
-        .progress-indicator {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 30%;
-            background: #cbd5e1;
-            animation: flow 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        .bar {
+            flex: 1;
+            background-color: #b5937a; /* Copper */
+            opacity: 0.7;
+            border-radius: 2px 2px 0 0;
+            transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s;
+        }
+        .bar:hover {
+            opacity: 1;
+            background-color: #ffffff;
         }
 
-        .code-block {
-            background-color: #000000;
-            border: 1px solid #334155;
+        /* Hide scrollbar for logs */
+        .logs::-webkit-scrollbar {
+            display: none;
+        }
+        .logs {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
-<body class="antialiased selection:bg-metal-400 selection:text-pure min-h-screen flex flex-col items-center py-16 px-6">
+<body class="flex flex-col items-center justify-start min-h-screen pt-24 pb-32 px-6">
 
-    <main class="w-full max-w-3xl space-y-20">
+    <!-- Hero -->
+    <header class="w-full max-w-5xl text-center space-y-6 opacity-0 animate-slide-up" style="animation-delay: 0.1s;">
+        <h1 class="text-5xl md:text-7xl font-semibold tracking-tighter text-gradient">
+            Predictive Maintenance.
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-400 font-light max-w-2xl mx-auto tracking-tight">
+            Anticipate failure before it happens.
+        </p>
+    </header>
 
-        <!-- Header / Idea -->
-        <header class="space-y-6">
-            <div class="inline-flex items-center gap-3 px-3 py-1.5 rounded-full metallic-border metallic-surface text-xs font-mono text-metal-300">
-                <span class="w-2 h-2 rounded-full bg-metal-300 animate-pulse"></span>
-                SYSTEM ACTIVE
-            </div>
-            <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-white">
-                Turbofan Engine <br>
-                <span class="metallic-text">Predictive Maintenance.</span>
-            </h1>
-            <p class="text-metal-400 text-lg leading-relaxed max-w-xl font-light">
-                An industrial-grade IoT platform designed to ingest raw sensor telemetry, process time-series data at scale, and predict Remaining Useful Life (RUL) before catastrophic failure occurs.
-            </p>
-        </header>
-
-        <!-- Technical Flow -->
-        <section class="space-y-8">
-            <h2 class="text-xs font-mono text-metal-400 uppercase tracking-widest">Data Flow & Architecture</h2>
+    <!-- Live Demo Dashboard Container -->
+    <div class="w-full max-w-5xl mt-20 opacity-0 animate-slide-up" style="animation-delay: 0.3s;">
+        <div class="apple-glass rounded-3xl p-6 md:p-12 flex flex-col gap-12">
             
-            <div class="metallic-surface metallic-border rounded-xl p-8 space-y-8">
+            <!-- Dashboard Header -->
+            <div class="flex justify-between items-center border-b border-edge pb-6">
+                <div class="font-medium text-sm tracking-widest text-copper uppercase">System Monitor</div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-copper animate-pulse"></span>
+                    <span class="text-xs font-mono text-gray-400">LIVE DATA</span>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                 
-                <!-- Step 1 -->
-                <div class="flex items-start gap-6">
-                    <div class="w-12 h-12 shrink-0 rounded-full metallic-border flex items-center justify-center font-mono text-metal-300">01</div>
-                    <div class="space-y-2 flex-grow">
-                        <h3 class="font-medium text-white">IoT Data Ingestion</h3>
-                        <p class="text-sm text-metal-400">Continuous TCP socket streaming of high-frequency sensor readings simulating active aircraft engines.</p>
-                        <div class="progress-line mt-4"><div class="progress-indicator"></div></div>
+                <!-- Left: RUL & Logs -->
+                <div class="space-y-12 flex flex-col justify-between">
+                    <div>
+                        <div class="text-sm text-gray-500 mb-2">Remaining Useful Life (Cycles)</div>
+                        <div class="text-8xl font-light tracking-tighter text-white tabular-nums" id="rul-value">112</div>
+                        <div class="w-full h-1 bg-surface2 mt-6 rounded-full overflow-hidden">
+                            <div id="rul-bar" class="h-full bg-copper transition-all duration-1000 ease-out" style="width: 86%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-surface rounded-xl p-4 border border-edge">
+                        <div class="text-xs font-mono text-gray-500 mb-3 border-b border-edge pb-2">TCP STREAM_PORT:9999</div>
+                        <div class="logs h-32 overflow-y-auto font-mono text-xs text-gray-400 space-y-1" id="log-container">
+                            <!-- JS Generated -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- Step 2 -->
-                <div class="flex items-start gap-6">
-                    <div class="w-12 h-12 shrink-0 rounded-full metallic-border flex items-center justify-center font-mono text-metal-300">02</div>
-                    <div class="space-y-2">
-                        <h3 class="font-medium text-white">Stream Processing</h3>
-                        <p class="text-sm text-metal-400">PySpark ETL consumes the data stream, validates constraints, and computes rolling window features (mean, std) on the fly.</p>
-                        <div class="progress-line mt-4"><div class="progress-indicator" style="animation-delay: 0.5s;"></div></div>
+                <!-- Right: Charts -->
+                <div class="space-y-10">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-end">
+                            <div class="text-sm text-gray-500">LPC Outlet Temp</div>
+                            <div class="text-lg font-mono text-white tabular-nums" id="metric-1">642.15</div>
+                        </div>
+                        <div class="chart-container" id="chart-1"></div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-end">
+                            <div class="text-sm text-gray-500">HPC Outlet Pressure</div>
+                            <div class="text-lg font-mono text-white tabular-nums" id="metric-2">1401.30</div>
+                        </div>
+                        <div class="chart-container" id="chart-2"></div>
                     </div>
                 </div>
 
-                <!-- Step 3 -->
-                <div class="flex items-start gap-6">
-                    <div class="w-12 h-12 shrink-0 rounded-full metallic-border flex items-center justify-center font-mono text-metal-300">03</div>
-                    <div class="space-y-2">
-                        <h3 class="font-medium text-white">NoSQL Storage</h3>
-                        <p class="text-sm text-metal-400">Processed telemetry and features are written into ScyllaDB, optimized for massive time-series write workloads.</p>
-                        <div class="progress-line mt-4"><div class="progress-indicator" style="animation-delay: 1s;"></div></div>
-                    </div>
-                </div>
-
-                <!-- Step 4 -->
-                <div class="flex items-start gap-6">
-                    <div class="w-12 h-12 shrink-0 rounded-full metallic-border flex items-center justify-center font-mono text-metal-300">04</div>
-                    <div class="space-y-2">
-                        <h3 class="font-medium text-white">XGBoost Inference</h3>
-                        <p class="text-sm text-metal-400">A dedicated ML service polls the database, evaluates the degradation curve using XGBoost, and updates the dashboard.</p>
-                    </div>
-                </div>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <!-- Tech Stack -->
-        <section class="space-y-6">
-            <h2 class="text-xs font-mono text-metal-400 uppercase tracking-widest">Core Technologies</h2>
-            <div class="flex flex-wrap gap-3">
-                <span class="px-4 py-2 rounded-md metallic-border metallic-surface text-sm font-mono text-metal-300">PySpark</span>
-                <span class="px-4 py-2 rounded-md metallic-border metallic-surface text-sm font-mono text-metal-300">ScyllaDB</span>
-                <span class="px-4 py-2 rounded-md metallic-border metallic-surface text-sm font-mono text-metal-300">XGBoost</span>
-                <span class="px-4 py-2 rounded-md metallic-border metallic-surface text-sm font-mono text-metal-300">Streamlit</span>
-                <span class="px-4 py-2 rounded-md metallic-border metallic-surface text-sm font-mono text-metal-300">Docker Compose</span>
+    <!-- Architecture & Features -->
+    <div class="w-full max-w-5xl mt-32 space-y-16 opacity-0 animate-slide-up" style="animation-delay: 0.5s;">
+        <h2 class="text-3xl font-semibold tracking-tight text-center mb-16">Engineered for precision.</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Arch 1 -->
+            <div class="border-t border-edge pt-6">
+                <h3 class="text-lg font-medium text-white mb-3">1. Continuous Ingestion</h3>
+                <p class="text-sm text-gray-400 leading-relaxed font-light">
+                    Simulated high-frequency TCP streaming representing live turbofan telemetry directly from the engine sensors.
+                </p>
             </div>
-        </section>
-
-        <!-- Action / Setup -->
-        <section class="space-y-6 pt-8 border-t border-metal-700">
-            <h2 class="text-xs font-mono text-metal-400 uppercase tracking-widest">Initialization</h2>
-            <div class="code-block rounded-lg p-6 flex flex-col gap-4">
-                <p class="text-sm text-metal-400">The full architecture requires a local Docker engine to spin up the distributed services.</p>
-                <div class="flex items-center justify-between bg-[#0f172a] px-4 py-3 rounded border border-metal-700">
-                    <code class="font-mono text-metal-200 text-sm">docker-compose up --build</code>
-                </div>
-                
-                <div class="mt-4 flex flex-col sm:flex-row gap-4">
-                    <a href="https://github.com/BrooksNguyen/Predictive-Maintenance" target="_blank" class="flex-1 py-3 px-6 rounded bg-metal-200 text-pure font-medium text-center hover:bg-white transition-colors">
-                        View Repository
-                    </a>
-                    <a href="/demo" class="flex-1 py-3 px-6 rounded metallic-border metallic-surface text-white text-center hover:bg-metal-700 transition-colors">
-                        See How It Works
-                    </a>
-                </div>
+            
+            <!-- Arch 2 -->
+            <div class="border-t border-edge pt-6">
+                <h3 class="text-lg font-medium text-white mb-3">2. PySpark ETL</h3>
+                <p class="text-sm text-gray-400 leading-relaxed font-light">
+                    Real-time structured streaming processes raw packets, applying rolling window statistics to extract degradation features.
+                </p>
             </div>
-        </section>
+            
+            <!-- Arch 3 -->
+            <div class="border-t border-edge pt-6">
+                <h3 class="text-lg font-medium text-white mb-3">3. XGBoost Inference</h3>
+                <p class="text-sm text-gray-400 leading-relaxed font-light">
+                    A machine learning service continuously evaluates features against the trained model to predict impending failure cycles.
+                </p>
+            </div>
+        </div>
+    </div>
 
-    </main>
+    <!-- Setup / CTA -->
+    <div class="w-full max-w-5xl mt-32 flex flex-col items-center opacity-0 animate-slide-up" style="animation-delay: 0.7s;">
+        <div class="text-center space-y-6">
+            <h2 class="text-2xl font-medium tracking-tight">Run it locally.</h2>
+            <p class="text-gray-400 font-light text-sm max-w-md mx-auto">
+                Clone the repository and deploy the full data engineering stack (Spark, ScyllaDB, Python Services) via Docker.
+            </p>
+            <div class="inline-flex items-center gap-4 bg-surface border border-edge rounded-full px-6 py-3 mt-4">
+                <code class="font-mono text-sm text-silver">docker-compose up --build</code>
+            </div>
+            <div class="mt-8">
+                <a href="https://github.com/BrooksNguyen/Predictive-Maintenance" class="text-copper hover:text-white transition-colors text-sm font-medium">
+                    View source on GitHub ↗
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Smooth "Satisfying Running" Simulation
+        const logContainer = document.getElementById('log-container');
+        const rulValue = document.getElementById('rul-value');
+        const rulBar = document.getElementById('rul-bar');
+        const metric1 = document.getElementById('metric-1');
+        const metric2 = document.getElementById('metric-2');
+        const chart1 = document.getElementById('chart-1');
+        const chart2 = document.getElementById('chart-2');
+
+        let cycle = 54;
+        let rul = 112;
+
+        // Initialize empty bars for charts (40 bars each)
+        for (let i = 0; i < 40; i++) {
+            chart1.innerHTML += `<div class="bar" style="height: ${Math.random() * 40 + 20}%"></div>`;
+            chart2.innerHTML += `<div class="bar" style="height: ${Math.random() * 40 + 20}%"></div>`;
+        }
+
+        function pushTelemetry() {
+            cycle++;
+            
+            // Generate smooth random walk data
+            const v1 = (641.0 + Math.random() * 2);
+            const v2 = (1400.0 + Math.random() * 10);
+            
+            // Update metrics numbers
+            metric1.innerText = v1.toFixed(2);
+            metric2.innerText = v2.toFixed(2);
+
+            // Update Logs
+            const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
+            const logLine = document.createElement('div');
+            logLine.innerHTML = `<span class="text-copper">[${timestamp}]</span> <span class="text-gray-600">INGEST</span> {"unit":1,"cycle":${cycle},"s2":${v1.toFixed(1)},"s7":${v2.toFixed(1)}}`;
+            logContainer.appendChild(logLine);
+            
+            if (logContainer.children.length > 10) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+            logContainer.scrollTop = logContainer.scrollHeight;
+
+            // Satisfying RUL Countdown (drops periodically)
+            if (Math.random() > 0.8 && rul > 10) {
+                rul -= 1;
+                rulValue.innerText = rul;
+                rulBar.style.width = \`\${(rul / 125) * 100}%\`;
+            }
+
+            // Update Charts (Satisfying wave effect by pushing new element and removing first)
+            updateChart(chart1, v1, 641, 643);
+            updateChart(chart2, v2, 1400, 1410);
+        }
+
+        function updateChart(chart, val, min, max) {
+            chart.removeChild(chart.firstChild);
+            const newBar = document.createElement('div');
+            newBar.className = 'bar';
+            // Normalize value to percentage
+            let pct = ((val - min) / (max - min)) * 100;
+            if (pct < 10) pct = 10;
+            if (pct > 100) pct = 100;
+            
+            newBar.style.height = \`\${pct}%\`;
+            chart.appendChild(newBar);
+        }
+
+        // Run interval for smooth updates
+        setInterval(pushTelemetry, 250); // Fast satisfying updates
+    </script>
 
 </body>
 </html>

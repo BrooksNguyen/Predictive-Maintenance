@@ -437,14 +437,7 @@ def app(environ, start_response):
     """Dummy WSGI app to satisfy Vercel's Python runtime requirements."""
     try:
         import os
-        path = environ.get('PATH_INFO', '/')
-        
-        if path.rstrip('/') == '/demo':
-            html_file = 'demo.html'
-        else:
-            html_file = 'index.html'
-            
-        html_path = os.path.join(os.path.dirname(__file__), html_file)
+        html_path = os.path.join(os.path.dirname(__file__), 'index.html')
         with open(html_path, 'rb') as f:
             html_content = f.read()
             
