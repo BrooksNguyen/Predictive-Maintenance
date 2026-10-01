@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Simulation | Predictive Maintenance</title>
+    <title>Fleet Dashboard | Predictive Maintenance</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Inter', 'sans-serif'],
+                        sans: ['-apple-system', 'Inter', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
@@ -20,170 +20,233 @@
                         surface2: '#1a1816',
                         edge: '#2d2926',
                         copper: '#b5937a',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                        safe: '#10b981',
                     }
                 }
             }
         }
     </script>
-    <style>
-        .apple-glass {
-            background: rgba(26, 24, 22, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(181, 147, 122, 0.15);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .apple-glass {
+                background: rgba(26, 24, 22, 0.6);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border: 1px solid rgba(181, 147, 122, 0.15);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+            .chart-container {
+                display: flex;
+                align-items: flex-end;
+                gap: 2px;
+                height: 100px;
+            }
+            .bar {
+                flex: 1;
+                border-radius: 2px 2px 0 0;
+                transition: height 0.2s linear;
+            }
+            .logs::-webkit-scrollbar { display: none; }
+            .logs { -ms-overflow-style: none; scrollbar-width: none; }
         }
-        .chart-container {
-            display: flex;
-            align-items: flex-end;
-            gap: 2px;
-            height: 120px;
-        }
-        .bar {
-            flex: 1;
-            background-color: #b5937a;
-            opacity: 0.7;
-            border-radius: 2px 2px 0 0;
-            transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .logs::-webkit-scrollbar { display: none; }
-        .logs { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-[#050505] text-white min-h-screen flex flex-col p-6 md:p-12 antialiased">
+<body class="bg-base text-gray-200 min-h-screen flex flex-col p-4 md:p-8 antialiased">
 
     <!-- Top Navigation -->
-    <nav class="flex justify-between items-center mb-12 max-w-6xl mx-auto w-full">
+    <nav class="flex justify-between items-center mb-8 max-w-7xl mx-auto w-full">
         <a href="/" class="text-sm text-gray-500 hover:text-white transition-colors flex items-center gap-2">
             <span>←</span> Back to Overview
         </a>
-        <div class="text-xs font-mono text-[#b5937a] tracking-widest uppercase">Visual Simulation</div>
+        <div class="flex items-center gap-4">
+            <span class="text-xs font-mono text-copper tracking-widest uppercase">Global Fleet Command</span>
+            <div class="flex items-center gap-2 px-3 py-1 rounded bg-red-900/20 border border-red-500/30">
+                <span class="w-2 h-2 rounded-full bg-danger animate-pulse"></span>
+                <span class="text-xs font-mono text-danger">1 CRITICAL ALERT</span>
+            </div>
+        </div>
     </nav>
 
     <!-- Main Dashboard -->
-    <main class="flex-grow flex items-center justify-center max-w-6xl mx-auto w-full">
-        <div class="w-full apple-glass rounded-[2rem] p-8 md:p-14 flex flex-col gap-12">
+    <main class="flex-grow flex items-stretch justify-center max-w-7xl mx-auto w-full gap-6 flex-col lg:flex-row">
+        
+        <!-- Left Column: Fleet Overview -->
+        <div class="w-full lg:w-1/3 apple-glass rounded-[2rem] p-6 flex flex-col">
+            <div class="border-b border-edge pb-4 mb-4">
+                <h2 class="font-medium text-sm tracking-widest text-copper uppercase">Active Turbofans</h2>
+                <p class="text-xs text-gray-500 mt-1">Live XGBoost RUL Predictions</p>
+            </div>
             
-            <div class="flex justify-between items-center border-b border-[#2d2926] pb-6">
-                <div class="font-medium text-sm tracking-widest text-[#b5937a] uppercase">Engine FD001 Monitor</div>
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-[#b5937a] animate-pulse"></span>
-                    <span class="text-xs font-mono text-gray-400">STREAMING ACTIVE</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                
-                <!-- Left: RUL & Logs -->
-                <div class="space-y-12 flex flex-col justify-between">
+            <div class="space-y-3 flex-grow">
+                <!-- Engine 1 -->
+                <div class="p-4 rounded-xl border border-edge bg-surface2/50 flex justify-between items-center">
                     <div>
-                        <div class="text-sm text-gray-500 mb-2">Remaining Useful Life (Cycles)</div>
-                        <div class="text-8xl md:text-9xl font-light tracking-tighter tabular-nums" id="rul-value">125</div>
-                        <div class="w-full h-1.5 bg-[#1a1816] mt-8 rounded-full overflow-hidden">
-                            <div id="rul-bar" class="h-full bg-[#b5937a] transition-all duration-1000 ease-out" style="width: 100%;"></div>
-                        </div>
+                        <div class="font-mono text-sm text-white">ENG-001</div>
+                        <div class="text-xs text-gray-500">Boeing 737</div>
                     </div>
-                    
-                    <div class="bg-[#0f0e0d] rounded-xl p-5 border border-[#2d2926]">
-                        <div class="text-xs font-mono text-gray-500 mb-4 border-b border-[#2d2926] pb-3">TCP INGESTION [PORT 9999]</div>
-                        <div class="logs h-36 overflow-y-auto font-mono text-xs text-gray-500 space-y-1.5" id="log-container">
-                        </div>
+                    <div class="text-right">
+                        <div class="font-mono font-bold text-lg text-safe">184</div>
+                        <div class="text-[10px] text-gray-500 uppercase">Cycles Left</div>
                     </div>
                 </div>
 
-                <!-- Right: Charts -->
-                <div class="space-y-10 flex flex-col justify-center">
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-end">
-                            <div class="text-sm text-gray-500">Sensor 2: LPC Outlet Temp</div>
-                            <div class="text-xl font-mono tabular-nums text-white" id="metric-1">642.15</div>
-                        </div>
-                        <div class="chart-container" id="chart-1"></div>
+                <!-- Engine 2 -->
+                <div class="p-4 rounded-xl border border-edge bg-surface2/50 flex justify-between items-center">
+                    <div>
+                        <div class="font-mono text-sm text-white">ENG-002</div>
+                        <div class="text-xs text-gray-500">Airbus A320</div>
                     </div>
+                    <div class="text-right">
+                        <div class="font-mono font-bold text-lg text-warning">62</div>
+                        <div class="text-[10px] text-warning uppercase">Warning</div>
+                    </div>
+                </div>
 
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-end">
-                            <div class="text-sm text-gray-500">Sensor 7: HPC Outlet Pressure</div>
-                            <div class="text-xl font-mono tabular-nums text-white" id="metric-2">1401.30</div>
-                        </div>
-                        <div class="chart-container" id="chart-2"></div>
+                <!-- Engine 3 (CRITICAL) -->
+                <div class="p-4 rounded-xl border border-danger bg-danger/10 flex justify-between items-center relative overflow-hidden shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-danger animate-pulse"></div>
+                    <div class="pl-2">
+                        <div class="font-mono text-sm text-white">ENG-003</div>
+                        <div class="text-xs text-danger font-medium animate-pulse">MAINTENANCE REQ</div>
                     </div>
+                    <div class="text-right">
+                        <div class="font-mono font-bold text-2xl text-danger" id="critical-rul">14</div>
+                        <div class="text-[10px] text-danger uppercase font-bold">Cycles Left</div>
+                    </div>
+                </div>
+
+                <!-- Engine 4 -->
+                <div class="p-4 rounded-xl border border-edge bg-surface2/50 flex justify-between items-center">
+                    <div>
+                        <div class="font-mono text-sm text-white">ENG-004</div>
+                        <div class="text-xs text-gray-500">Boeing 777</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-mono font-bold text-lg text-safe">215</div>
+                        <div class="text-[10px] text-gray-500 uppercase">Cycles Left</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Deep Dive on Critical Engine -->
+        <div class="w-full lg:w-2/3 apple-glass rounded-[2rem] p-8 flex flex-col gap-8">
+            <div class="flex justify-between items-center border-b border-edge pb-4">
+                <div>
+                    <h2 class="font-medium text-lg tracking-tight text-white">Telemetry Deep Dive: <span class="text-danger font-mono font-bold">ENG-003</span></h2>
+                    <p class="text-xs text-danger mt-1">XGBoost detected anomalous vibration and temperature spikes.</p>
+                </div>
+            </div>
+
+            <!-- Focus Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-surface p-4 rounded-lg border border-edge">
+                    <div class="text-xs text-gray-500 mb-1">Current Cycle</div>
+                    <div class="text-xl font-mono text-white" id="cycle-count">198</div>
+                </div>
+                <div class="bg-surface p-4 rounded-lg border border-edge">
+                    <div class="text-xs text-gray-500 mb-1">Health Status</div>
+                    <div class="text-xl font-mono text-danger font-bold">CRITICAL</div>
+                </div>
+                <div class="bg-surface p-4 rounded-lg border border-edge col-span-2">
+                    <div class="text-xs text-gray-500 mb-1">System Recommendation</div>
+                    <div class="text-sm font-medium text-white mt-1">Ground aircraft immediately. Replace HPC component.</div>
+                </div>
+            </div>
+
+            <!-- Live Charts -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+                
+                <div class="space-y-2">
+                    <div class="flex justify-between items-end">
+                        <div class="text-xs text-gray-500">Sensor 2: LPC Temp (°R)</div>
+                        <div class="text-sm font-mono text-danger" id="metric-1">644.21 (HIGH)</div>
+                    </div>
+                    <div class="chart-container bg-surface border border-edge p-2 rounded" id="chart-1"></div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between items-end">
+                        <div class="text-xs text-gray-500">Sensor 7: HPC Pressure (psia)</div>
+                        <div class="text-sm font-mono text-danger" id="metric-2">1390.10 (LOW)</div>
+                    </div>
+                    <div class="chart-container bg-surface border border-edge p-2 rounded" id="chart-2"></div>
                 </div>
 
             </div>
+
+            <!-- Terminal Log -->
+            <div class="mt-auto pt-8">
+                <div class="bg-base rounded-xl p-4 border border-edge">
+                    <div class="text-xs font-mono text-gray-500 mb-2 border-b border-edge pb-2">RAW TCP STREAM [ENG-003]</div>
+                    <div class="logs h-24 overflow-y-auto font-mono text-[11px] text-gray-500 space-y-1" id="log-container">
+                        <!-- JS logs -->
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 
     <script>
         const logContainer = document.getElementById('log-container');
-        const rulValue = document.getElementById('rul-value');
-        const rulBar = document.getElementById('rul-bar');
+        const critRul = document.getElementById('critical-rul');
+        const cycleCount = document.getElementById('cycle-count');
         const metric1 = document.getElementById('metric-1');
         const metric2 = document.getElementById('metric-2');
         const chart1 = document.getElementById('chart-1');
         const chart2 = document.getElementById('chart-2');
 
-        let cycle = 1;
-        let rul = 125;
+        let cycle = 198;
+        let rul = 14;
 
+        // Init charts with degraded data shape
         for (let i = 0; i < 40; i++) {
-            chart1.innerHTML += `<div class="bar" style="height: ${Math.random() * 40 + 20}%"></div>`;
-            chart2.innerHTML += `<div class="bar" style="height: ${Math.random() * 40 + 20}%"></div>`;
+            chart1.innerHTML += `<div class="bar bg-danger opacity-80" style="height: ${Math.random() * 30 + 70}%"></div>`;
+            chart2.innerHTML += `<div class="bar bg-danger opacity-80" style="height: ${Math.random() * 30 + 10}%"></div>`;
         }
 
         function pushTelemetry() {
             cycle++;
             
-            const v1 = (641.0 + Math.random() * 2);
-            const v2 = (1400.0 + Math.random() * 10);
+            // Generate anomalous data (Temp rising, Pressure dropping)
+            const v1 = (643.5 + Math.random() * 1.5); // high temp
+            const v2 = (1388.0 + Math.random() * 5); // low pressure
             
-            metric1.innerText = v1.toFixed(2);
-            metric2.innerText = v2.toFixed(2);
+            metric1.innerText = v1.toFixed(2) + " (HIGH)";
+            metric2.innerText = v2.toFixed(2) + " (LOW)";
+            cycleCount.innerText = cycle;
 
             const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
             const logLine = document.createElement('div');
-            logLine.innerHTML = `<span class="text-[#b5937a]">[${timestamp}]</span> <span class="text-gray-600">RECV</span> <span class="text-gray-400">{"eng":1,"cycle":${cycle},"s2":${v1.toFixed(2)},"s7":${v2.toFixed(2)}}</span>`;
+            logLine.innerHTML = `<span class="text-danger">[${timestamp}]</span> <span>WARN</span> <span class="text-gray-400">{"eng":"003","cycle":${cycle},"s2":${v1.toFixed(2)},"s7":${v2.toFixed(2)}}</span>`;
             logContainer.appendChild(logLine);
             
-            if (logContainer.children.length > 12) logContainer.removeChild(logContainer.firstChild);
+            if (logContainer.children.length > 8) logContainer.removeChild(logContainer.firstChild);
             logContainer.scrollTop = logContainer.scrollHeight;
 
-            if (Math.random() > 0.85 && rul > 0) {
+            if (Math.random() > 0.8 && rul > 0) {
                 rul -= 1;
-                rulValue.innerText = rul;
-                const pct = (rul / 125) * 100;
-                rulBar.style.width = \`\${pct}%\`;
-                
-                if (pct < 30) {
-                    rulBar.style.backgroundColor = '#ef4444'; 
-                } else if (pct < 60) {
-                    rulBar.style.backgroundColor = '#f59e0b';
-                }
+                critRul.innerText = rul;
             }
 
-            updateChart(chart1, v1, 641, 643);
-            updateChart(chart2, v2, 1400, 1410);
+            // Update Charts
+            chart1.removeChild(chart1.firstChild);
+            const b1 = document.createElement('div');
+            b1.className = 'bar bg-danger opacity-80';
+            b1.style.height = \`\${((v1 - 640) / 6) * 100}%\`; // normalized
+            chart1.appendChild(b1);
+
+            chart2.removeChild(chart2.firstChild);
+            const b2 = document.createElement('div');
+            b2.className = 'bar bg-danger opacity-80';
+            b2.style.height = \`\${((v2 - 1380) / 20) * 100}%\`; // normalized
+            chart2.appendChild(b2);
         }
 
-        function updateChart(chart, val, min, max) {
-            chart.removeChild(chart.firstChild);
-            const newBar = document.createElement('div');
-            newBar.className = 'bar';
-            
-            if (rul < 30) {
-                newBar.style.backgroundColor = '#ef4444';
-            } else if (rul < 60) {
-                newBar.style.backgroundColor = '#f59e0b';
-            }
-            
-            let pct = ((val - min) / (max - min)) * 100;
-            if (pct < 10) pct = 10;
-            if (pct > 100) pct = 100;
-            newBar.style.height = \`\${pct}%\`;
-            chart.appendChild(newBar);
-        }
-
-        setInterval(pushTelemetry, 150);
+        setInterval(pushTelemetry, 1000); // 1 update per sec for readability
     </script>
 </body>
 </html>
