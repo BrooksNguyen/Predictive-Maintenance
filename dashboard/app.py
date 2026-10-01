@@ -435,8 +435,16 @@ def main():
 # ── Vercel Serverless Stub ──────────────────────────────────
 def app(environ, start_response):
     """Dummy WSGI app to satisfy Vercel's Python runtime requirements."""
-    start_response('200 OK', [('Content-Type', 'text/plain')])
-    return [b"Dashboard Service (Vercel Stub)"]
+    try:
+        import os
+        html_path = os.path.join(os.path.dirname(__file__), 'index.html')
+        with open(html_path, 'rb') as f:
+            html_content = f.read()
+        start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
+        return [html_content]
+    except Exception as e:
+        start_response('500 Internal Server Error', [('Content-Type', 'text/plain')])
+        return [f"Error loading landing page: {e}".encode('utf-8')]
 
 
 if __name__ == "__main__":
