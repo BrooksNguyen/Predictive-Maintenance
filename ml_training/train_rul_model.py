@@ -24,13 +24,16 @@ import sys
 import json
 import logging
 
-import joblib
-import numpy as np
-import pandas as pd
-import xgboost as xgb
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+try:
+    import joblib
+    import numpy as np
+    import pandas as pd
+    import xgboost as xgb
+    from sklearn.model_selection import train_test_split
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+except ImportError:
+    pass
 
 # ── Configuration ───────────────────────────────────────────
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

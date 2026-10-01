@@ -16,12 +16,15 @@ Features:
 import os
 import time
 
-import pandas as pd
-import streamlit as st
-import plotly.express as px
-import plotly.graph_objects as go
-from cassandra.cluster import Cluster
-from cassandra.query import SimpleStatement
+try:
+    import pandas as pd
+    import streamlit as st
+    import plotly.express as px
+    import plotly.graph_objects as go
+    from cassandra.cluster import Cluster
+    from cassandra.query import SimpleStatement
+except ImportError:
+    pass
 
 # ── Configuration ───────────────────────────────────────────
 SCYLLA_HOST = os.getenv("SCYLLA_HOST", "scylladb")

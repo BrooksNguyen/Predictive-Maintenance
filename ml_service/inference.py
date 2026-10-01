@@ -19,10 +19,13 @@ import time
 import logging
 from datetime import datetime, timezone
 
-import joblib
-import numpy as np
-import pandas as pd
-from cassandra.cluster import Cluster
+try:
+    import joblib
+    import numpy as np
+    import pandas as pd
+    from cassandra.cluster import Cluster
+except ImportError:
+    pass
 from cassandra.query import SimpleStatement
 
 # ── Configuration ───────────────────────────────────────────

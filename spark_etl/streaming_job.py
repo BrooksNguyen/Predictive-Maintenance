@@ -15,12 +15,15 @@ Pipeline:
 import os
 import logging
 
-import pandas as pd
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, split
-from pyspark.sql.types import DoubleType, IntegerType
-from cassandra.cluster import Cluster as CassandraCluster
-from cassandra.query import SimpleStatement
+try:
+    import pandas as pd
+    from pyspark.sql import SparkSession
+    from pyspark.sql.functions import col, split
+    from pyspark.sql.types import DoubleType, IntegerType
+    from cassandra.cluster import Cluster as CassandraCluster
+    from cassandra.query import SimpleStatement
+except ImportError:
+    pass
 
 # ── Configuration (injected via Docker env vars) ───────────
 SPARK_MASTER = os.getenv("SPARK_MASTER_URL", "spark://spark-master:7077")
