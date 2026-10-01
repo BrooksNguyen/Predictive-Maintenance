@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Simulation | Predictive Maintenance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        base: '#050505',
+                        surface: '#0f0e0d',
+                        surface2: '#1a1816',
+                        edge: '#2d2926',
+                        copper: '#b5937a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: theme('colors.base');
+            color: white;
+            -webkit-font-smoothing: antialiased;
+        }
+        .apple-glass {
+            background: rgba(26, 24, 22, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(181, 147, 122, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 120px;
+        }
+        .bar {
+            flex: 1;
+            background-color: #b5937a;
+            opacity: 0.7;
+            border-radius: 2px 2px 0 0;
+            transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .logs::-webkit-scrollbar { display: none; }
+        .logs { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-6 md:p-12">
+
+    <!-- Top Navigation -->
+    <nav class="flex justify-between items-center mb-12">
+        <a href="/" class="text-sm text-gray-500 hover:text-white transition-colors flex items-center gap-2">
+            <span>←</span> Back to Overview
+        </a>
+        <div class="text-xs font-mono text-copper tracking-widest uppercase">Visual Simulation</div>
+    </nav>
+
+    <!-- Main Dashboard -->
+    <main class="flex-grow flex items-center justify-center">
+        <div class="w-full max-w-5xl apple-glass rounded-3xl p-8 md:p-12 flex flex-col gap-12">
+            
+            <div class="flex justify-between items-center border-b border-edge pb-6">
+                <div class="font-medium text-sm tracking-widest text-copper uppercase">Engine FD001 Monitor</div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-copper animate-pulse"></span>
+                    <span class="text-xs font-mono text-gray-400">STREAMING ACTIVE</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                
+                <!-- Left: RUL & Logs -->
+                <div class="space-y-12 flex flex-col justify-between">
+                    <div>
+                        <div class="text-sm text-gray-500 mb-2">Remaining Useful Life (Cycles)</div>
+                        <div class="text-8xl font-light tracking-tighter tabular-nums" id="rul-value">125</div>
+                        <div class="w-full h-1 bg-surface2 mt-6 rounded-full overflow-hidden">
+                            <div id="rul-bar" class="h-full bg-copper transition-all duration-1000 ease-out" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-surface rounded-xl p-4 border border-edge">
+                        <div class="text-xs font-mono text-gray-500 mb-3 border-b border-edge pb-2">TCP INGESTION [PORT 9999]</div>
+                        <div class="logs h-32 overflow-y-auto font-mono text-xs text-gray-400 space-y-1" id="log-container">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Charts -->
+                <div class="space-y-10">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-end">
+                            <div class="text-sm text-gray-500">Sensor 2: LPC Outlet Temp</div>
+                            <div class="text-lg font-mono tabular-nums" id="metric-1">642.15</div>
+                        </div>
+                        <div class="chart-container" id="chart-1"></div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-end">
+                            <div class="text-sm text-gray-500">Sensor 7: HPC Outlet Pressure</div>
+                            <div class="text-lg font-mono tabular-nums" id="metric-2">1401.30</div>
+                        </div>
+                        <div class="chart-container" id="chart-2"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const logContainer = document.getElementById('log-container');
+        const rulValue = document.getElementById('rul-value');
+        const rulBar = document.getElementById('rul-bar');
+        const metric1 = document.getElementById('metric-1');
+        const metric2 = document.getElementById('metric-2');
+        const chart1 = document.getElementById('chart-1');
+        const chart2 = document.getElementById('chart-2');
+
+        let cycle = 1;
+        let rul = 125;
+
+        for (let i = 0; i < 40; i++) {
+            chart1.innerHTML += `<div class="bar" style="height: ${Math.random() * 40 + 20}%"></div>`;
+            chart2.innerHTML += `<div class="bar" style="height: ${Math.random() * 40 + 20}%"></div>`;
+        }
+
+        function pushTelemetry() {
+            cycle++;
+            
+            const v1 = (641.0 + Math.random() * 2);
+            const v2 = (1400.0 + Math.random() * 10);
+            
+            metric1.innerText = v1.toFixed(2);
+            metric2.innerText = v2.toFixed(2);
+
+            const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
+            const logLine = document.createElement('div');
+            logLine.innerHTML = `<span class="text-copper">[${timestamp}]</span> <span class="text-gray-600">RECV</span> {"eng":1,"cycle":${cycle},"s2":${v1.toFixed(2)},"s7":${v2.toFixed(2)}}`;
+            logContainer.appendChild(logLine);
+            
+            if (logContainer.children.length > 10) logContainer.removeChild(logContainer.firstChild);
+            logContainer.scrollTop = logContainer.scrollHeight;
+
+            if (Math.random() > 0.85 && rul > 0) {
+                rul -= 1;
+                rulValue.innerText = rul;
+                rulBar.style.width = \`\${(rul / 125) * 100}%\`;
+            }
+
+            updateChart(chart1, v1, 641, 643);
+            updateChart(chart2, v2, 1400, 1410);
+        }
+
+        function updateChart(chart, val, min, max) {
+            chart.removeChild(chart.firstChild);
+            const newBar = document.createElement('div');
+            newBar.className = 'bar';
+            let pct = ((val - min) / (max - min)) * 100;
+            if (pct < 10) pct = 10;
+            if (pct > 100) pct = 100;
+            newBar.style.height = \`\${pct}%\`;
+            chart.appendChild(newBar);
+        }
+
+        setInterval(pushTelemetry, 150);
+    </script>
+</body>
+</html>
