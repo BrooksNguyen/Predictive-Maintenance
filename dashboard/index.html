@@ -3,30 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictive Maintenance | Brooks Nguyen</title>
+    <title>Predictive Maintenance | Enterprise Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Inter', 'sans-serif'],
+                        sans: ['Inter', '-apple-system', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        base: '#050505',
-                        surface: '#0f0e0d',
-                        surface2: '#1a1816',
-                        edge: '#2d2926',
-                        silver: '#e5e5ea',
-                        copper: '#b5937a',
+                        bgMain: '#0a0a0a',
+                        surface: '#121212',
+                        borderSubtle: '#262626',
+                        textPrimary: '#ededed',
+                        textSecondary: '#a3a3a3',
+                        accent: '#2dd4bf', // Teal for tech/healthy accents
                     },
                     animation: {
-                        'slide-up': 'slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     },
                     keyframes: {
-                        slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(15px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
                     }
                 }
             }
@@ -35,110 +35,114 @@
     <style type="text/tailwindcss">
         @layer utilities {
             .text-gradient {
-                background: linear-gradient(135deg, #ffffff 0%, #b5937a 100%);
+                background: linear-gradient(180deg, #ffffff 0%, #a3a3a3 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
         }
     </style>
 </head>
-<body class="bg-base text-silver flex flex-col items-center justify-start min-h-screen pt-24 pb-32 px-6 antialiased">
+<body class="bg-bgMain text-textSecondary flex flex-col items-center justify-start min-h-screen pt-24 pb-32 px-6 antialiased selection:bg-neutral-800 selection:text-white">
 
     <!-- Hero -->
     <header class="w-full max-w-4xl text-center space-y-8 opacity-0 animate-slide-up">
-        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-edge bg-surface text-xs font-medium text-copper uppercase tracking-widest">
-            A Data Engineering Portfolio Project
+        <div class="inline-flex items-center gap-3 px-3 py-1.5 rounded bg-surface border border-borderSubtle text-[11px] font-mono text-textPrimary uppercase tracking-widest">
+            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+            Enterprise IoT Pipeline
         </div>
-        <h1 class="text-5xl md:text-7xl font-semibold tracking-tighter text-gradient">
+        <h1 class="text-5xl md:text-7xl font-semibold tracking-tighter text-gradient leading-tight">
             Predictive Maintenance.
         </h1>
-        <p class="text-xl text-gray-400 font-light max-w-2xl mx-auto leading-relaxed">
-            An end-to-end industrial IoT pipeline designed to anticipate turbofan engine failure before it happens, saving millions in reactive maintenance costs.
+        <p class="text-lg text-textSecondary font-light max-w-2xl mx-auto leading-relaxed">
+            An end-to-end distributed system designed to ingest, process, and predict turbofan engine failure using Spark and XGBoost.
         </p>
         
         <div class="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-            <a href="https://github.com/BrooksNguyen/Predictive-Maintenance" target="_blank" class="px-8 py-4 rounded-full bg-white text-black font-medium hover:bg-gray-200 transition-colors">
+            <a href="https://github.com/BrooksNguyen/Predictive-Maintenance" target="_blank" class="px-8 py-3.5 rounded bg-textPrimary text-bgMain font-medium hover:bg-white transition-colors">
                 View GitHub Repo
             </a>
-            <a href="/demo" class="px-8 py-4 rounded-full border border-edge bg-surface hover:bg-surface2 transition-colors font-medium text-white">
-                Live Visual Demo
+            <a href="/demo" class="px-8 py-3.5 rounded border border-borderSubtle bg-surface hover:bg-neutral-800 transition-colors font-medium text-textPrimary">
+                Launch Platform
             </a>
         </div>
     </header>
 
     <!-- The Why & What -->
-    <main class="w-full max-w-4xl mt-32 space-y-24 opacity-0 animate-slide-up" style="animation-delay: 0.2s;">
+    <main class="w-full max-w-4xl mt-32 space-y-24 opacity-0 animate-slide-up" style="animation-delay: 0.1s;">
         
         <section class="grid grid-cols-1 md:grid-cols-2 gap-16">
             <div class="space-y-4">
-                <h2 class="text-xs font-mono text-copper uppercase tracking-widest">The Problem</h2>
-                <h3 class="text-2xl font-medium text-white">Why Predictive Maintenance?</h3>
-                <p class="text-gray-400 font-light leading-relaxed">
-                    In aerospace and industrial manufacturing, unexpected equipment failure costs lives and millions of dollars. Traditional "reactive" maintenance fixes things after they break. "Preventative" maintenance replaces parts too early, wasting money. <strong>Predictive Maintenance (PdM)</strong> uses live telemetry and machine learning to predict exactly when a component will fail, maximizing its Remaining Useful Life (RUL).
+                <h2 class="text-[11px] font-mono text-textSecondary uppercase tracking-widest border-b border-borderSubtle pb-2">The Problem</h2>
+                <h3 class="text-xl font-medium text-textPrimary">Averting Catastrophic Failure</h3>
+                <p class="text-sm leading-relaxed">
+                    In aerospace and industrial manufacturing, unexpected equipment failure costs lives and millions of dollars. Traditional "reactive" maintenance fixes things after they break. "Preventative" maintenance replaces parts too early, wasting capital. <strong>Predictive Maintenance (PdM)</strong> uses live telemetry and machine learning to predict exactly when a component will fail, maximizing its Remaining Useful Life (RUL).
                 </p>
             </div>
             <div class="space-y-4">
-                <h2 class="text-xs font-mono text-copper uppercase tracking-widest">The Dataset</h2>
-                <h3 class="text-2xl font-medium text-white">NASA C-MAPSS</h3>
-                <p class="text-gray-400 font-light leading-relaxed">
-                    This project is powered by the Commercial Modular Aero-Propulsion System Simulation (C-MAPSS) dataset provided by NASA. It contains run-to-failure simulated telemetry data for turbofan engines. The engine operates normally at the start of each time series, and develops a fault at some point during the series, eventually reaching failure.
+                <h2 class="text-[11px] font-mono text-textSecondary uppercase tracking-widest border-b border-borderSubtle pb-2">The Dataset</h2>
+                <h3 class="text-xl font-medium text-textPrimary">NASA C-MAPSS FD001</h3>
+                <p class="text-sm leading-relaxed">
+                    This project processes the Commercial Modular Aero-Propulsion System Simulation (C-MAPSS) dataset provided by NASA. It contains run-to-failure simulated telemetry data for turbofan engines, acting as a real-world benchmark for degradation forecasting.
                 </p>
             </div>
         </section>
 
         <!-- Tech Architecture -->
-        <section class="space-y-12 border-t border-edge pt-24">
-            <div class="text-center space-y-4">
-                <h2 class="text-xs font-mono text-copper uppercase tracking-widest">Architecture</h2>
-                <h3 class="text-3xl font-medium text-white">The Technology Stack</h3>
-                <p class="text-gray-400 font-light max-w-2xl mx-auto">A fully containerized microservice architecture handling everything from raw socket ingestion to machine learning inference.</p>
+        <section class="space-y-10 border-t border-borderSubtle pt-24">
+            <div class="text-center space-y-3">
+                <h2 class="text-[11px] font-mono text-textSecondary uppercase tracking-widest">System Architecture</h2>
+                <h3 class="text-2xl font-medium text-textPrimary">The Technology Stack</h3>
+                <p class="text-sm max-w-2xl mx-auto">A containerized microservice architecture built for high-throughput stream processing.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="p-6 rounded-2xl bg-surface border border-edge space-y-3">
-                    <h4 class="text-lg font-medium text-white">1. IoT Simulator (Python)</h4>
-                    <p class="text-sm text-gray-400 font-light leading-relaxed">Reads the NASA dataset and streams it row-by-row over a TCP socket, perfectly mimicking a real-time hardware sensor emitting packets over a network.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-6 rounded-lg bg-surface border border-borderSubtle space-y-2">
+                    <div class="font-mono text-xs text-textSecondary mb-4">01 // INGESTION</div>
+                    <h4 class="text-base font-medium text-textPrimary">IoT Simulator (Python)</h4>
+                    <p class="text-sm leading-relaxed">Streams C-MAPSS data row-by-row over a raw TCP socket, mimicking high-frequency hardware sensor payloads.</p>
                 </div>
-                <div class="p-6 rounded-2xl bg-surface border border-edge space-y-3">
-                    <h4 class="text-lg font-medium text-white">2. PySpark Structured Streaming</h4>
-                    <p class="text-sm text-gray-400 font-light leading-relaxed">A distributed ETL job that continuously consumes the TCP stream, applies a strict schema, and computes rolling-window statistics (mean, std) on the fly.</p>
+                <div class="p-6 rounded-lg bg-surface border border-borderSubtle space-y-2">
+                    <div class="font-mono text-xs text-textSecondary mb-4">02 // PROCESSING</div>
+                    <h4 class="text-base font-medium text-textPrimary">PySpark ETL</h4>
+                    <p class="text-sm leading-relaxed">A distributed Structured Streaming job that consumes the TCP stream and computes rolling-window statistics on the fly.</p>
                 </div>
-                <div class="p-6 rounded-2xl bg-surface border border-edge space-y-3">
-                    <h4 class="text-lg font-medium text-white">3. ScyllaDB (NoSQL)</h4>
-                    <p class="text-sm text-gray-400 font-light leading-relaxed">Used for its ultra-fast write performance. It stores both the raw high-frequency telemetry and the processed machine learning features.</p>
+                <div class="p-6 rounded-lg bg-surface border border-borderSubtle space-y-2">
+                    <div class="font-mono text-xs text-textSecondary mb-4">03 // STORAGE</div>
+                    <h4 class="text-base font-medium text-textPrimary">ScyllaDB (NoSQL)</h4>
+                    <p class="text-sm leading-relaxed">Ultra-low latency wide-column store used to persist both raw telemetry packets and processed ML features.</p>
                 </div>
-                <div class="p-6 rounded-2xl bg-surface border border-edge space-y-3">
-                    <h4 class="text-lg font-medium text-white">4. XGBoost ML Service</h4>
-                    <p class="text-sm text-gray-400 font-light leading-relaxed">A separate inference service that evaluates the latest data against a pre-trained XGBoost Regressor to predict the remaining cycles before failure.</p>
+                <div class="p-6 rounded-lg bg-surface border border-borderSubtle space-y-2">
+                    <div class="font-mono text-xs text-textSecondary mb-4">04 // INFERENCE</div>
+                    <h4 class="text-base font-medium text-textPrimary">XGBoost ML Service</h4>
+                    <p class="text-sm leading-relaxed">Continuously evaluates incoming feature vectors against a pre-trained Regressor model to predict failure cycles.</p>
                 </div>
             </div>
         </section>
 
         <!-- How to Use -->
-        <section class="space-y-8 border-t border-edge pt-24">
-            <h2 class="text-xs font-mono text-copper uppercase tracking-widest">Deployment</h2>
-            <h3 class="text-2xl font-medium text-white">How to Run Locally</h3>
-            <p class="text-gray-400 font-light leading-relaxed max-w-2xl">
-                Because this architecture relies on heavy distributed systems (Spark Master/Worker, ScyllaDB), the full platform cannot run directly on Vercel. You must deploy it locally using Docker Compose.
+        <section class="space-y-8 border-t border-borderSubtle pt-24">
+            <h2 class="text-[11px] font-mono text-textSecondary uppercase tracking-widest border-b border-borderSubtle pb-2 inline-block">Deployment Instructions</h2>
+            <p class="text-sm leading-relaxed max-w-2xl">
+                The full platform (Spark Master/Worker, ScyllaDB) requires local container orchestration. Use Docker Compose to spin up the cluster.
             </p>
-            <div class="bg-surface border border-edge rounded-xl p-6 font-mono text-sm">
-                <div class="text-gray-500 mb-2"># Clone the repository</div>
-                <div class="text-white mb-4">git clone https://github.com/BrooksNguyen/Predictive-Maintenance.git<br>cd Predictive-Maintenance</div>
+            <div class="bg-surface border border-borderSubtle rounded p-6 font-mono text-[13px] leading-relaxed">
+                <div class="text-neutral-500 mb-1"># Clone the repository</div>
+                <div class="text-textPrimary mb-5">git clone https://github.com/BrooksNguyen/Predictive-Maintenance.git<br>cd Predictive-Maintenance</div>
                 
-                <div class="text-gray-500 mb-2"># Spin up all 7 microservices</div>
-                <div class="text-copper">docker-compose up --build -d</div>
+                <div class="text-neutral-500 mb-1"># Spin up all 7 microservices in detached mode</div>
+                <div class="text-textPrimary mb-5">docker-compose up --build -d</div>
                 
-                <div class="text-gray-500 mt-4 mb-2"># Access the interactive dashboard</div>
-                <div class="text-white">Open http://localhost:8501 in your browser</div>
+                <div class="text-neutral-500 mb-1"># Access the interactive Streamlit dashboard</div>
+                <div class="text-textPrimary">open http://localhost:8501</div>
             </div>
         </section>
 
     </main>
 
     <!-- Footer -->
-    <footer class="w-full max-w-4xl mt-32 pt-8 border-t border-edge flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 opacity-0 animate-slide-up" style="animation-delay: 0.4s;">
-        <p>Architected & Developed by <strong class="text-gray-300">Brooks Nguyen</strong></p>
-        <p class="mt-2 md:mt-0">© 2026. Open Source Project.</p>
+    <footer class="w-full max-w-4xl mt-32 pt-8 border-t border-borderSubtle flex flex-col md:flex-row justify-between items-center text-[13px] opacity-0 animate-slide-up" style="animation-delay: 0.2s;">
+        <p>Architected by <strong class="text-textPrimary font-medium">Brooks Nguyen</strong></p>
+        <p class="mt-2 md:mt-0 font-mono">2026 // OPEN SOURCE</p>
     </footer>
 
 </body>

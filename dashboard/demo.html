@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fleet Dashboard | Predictive Maintenance</title>
+    <title>Fleet Dashboard | Enterprise Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>
@@ -11,7 +11,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Inter', '-apple-system', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
@@ -24,6 +24,7 @@
                         healthy: '#10b981',
                         warning: '#f59e0b',
                         critical: '#ef4444',
+                        accent: '#2dd4bf',
                     }
                 }
             }
@@ -35,7 +36,7 @@
                 display: flex;
                 align-items: flex-end;
                 gap: 2px;
-                height: 100px;
+                height: 90px;
             }
             .bar {
                 flex: 1;
@@ -45,7 +46,6 @@
             .logs::-webkit-scrollbar { display: none; }
             .logs { -ms-overflow-style: none; scrollbar-width: none; }
             
-            /* Professional focus states */
             .engine-card.active {
                 background-color: #1c1c1c;
                 border-color: #525252;
@@ -53,33 +53,47 @@
             .engine-card {
                 transition: all 0.2s ease;
             }
+
+            /* Toast Animation */
+            .toast-enter {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            .toast-active {
+                transform: translateY(0);
+                opacity: 1;
+                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            }
         }
     </style>
 </head>
 <body class="bg-bgMain text-textSecondary min-h-screen flex flex-col p-4 md:p-8 antialiased selection:bg-neutral-800">
 
     <!-- Top Navigation -->
-    <nav class="flex justify-between items-center mb-8 max-w-7xl mx-auto w-full">
-        <a href="/" class="text-sm hover:text-textPrimary transition-colors flex items-center gap-2">
-            <span>←</span> Back
+    <nav class="flex justify-between items-center mb-6 max-w-7xl mx-auto w-full">
+        <a href="/" class="text-[13px] hover:text-textPrimary transition-colors flex items-center gap-2">
+            <span>←</span> Platform Overview
         </a>
         <div class="flex items-center gap-4">
-            <span class="text-xs font-medium tracking-widest uppercase text-textPrimary">Fleet Overview</span>
+            <span class="text-[11px] font-mono tracking-widest uppercase text-textPrimary">Fleet Ops</span>
             <div class="flex items-center gap-2 px-2 py-1 rounded bg-neutral-900 border border-borderSubtle">
-                <span class="w-1.5 h-1.5 rounded-full bg-critical"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-critical animate-pulse"></span>
                 <span class="text-[10px] font-mono text-textPrimary">1 ALERT</span>
             </div>
         </div>
     </nav>
 
     <!-- Main Dashboard -->
-    <main class="flex-grow flex items-stretch justify-center max-w-7xl mx-auto w-full gap-6 flex-col lg:flex-row">
+    <main class="flex-grow flex items-stretch justify-center max-w-7xl mx-auto w-full gap-4 flex-col lg:flex-row">
         
         <!-- Left Column: Fleet List -->
-        <div class="w-full lg:w-1/3 bg-surface border border-borderSubtle rounded-xl p-5 flex flex-col">
-            <div class="border-b border-borderSubtle pb-4 mb-4">
-                <h2 class="font-medium text-sm text-textPrimary">Active Turbofans</h2>
-                <p class="text-xs mt-1">Select an engine to view telemetry.</p>
+        <div class="w-full lg:w-1/3 bg-surface border border-borderSubtle rounded p-5 flex flex-col">
+            <div class="border-b border-borderSubtle pb-4 mb-4 flex justify-between items-end">
+                <div>
+                    <h2 class="font-medium text-[13px] text-textPrimary">Active Assets</h2>
+                    <p class="text-[11px] mt-1">Live XGBoost Prediction Feed</p>
+                </div>
+                <button class="text-[10px] font-mono border border-borderSubtle px-2 py-1 rounded hover:bg-surfaceHover text-textPrimary" onclick="refreshData()">SYNC</button>
             </div>
             
             <div class="space-y-2 flex-grow" id="engine-list">
@@ -88,62 +102,89 @@
         </div>
 
         <!-- Right Column: Deep Dive -->
-        <div class="w-full lg:w-2/3 bg-surface border border-borderSubtle rounded-xl p-6 md:p-8 flex flex-col gap-8">
+        <div class="w-full lg:w-2/3 bg-surface border border-borderSubtle rounded p-6 md:p-8 flex flex-col gap-6">
             
-            <!-- Header -->
+            <!-- Header & Actions -->
             <div class="flex justify-between items-start border-b border-borderSubtle pb-5">
                 <div>
-                    <h2 class="font-medium text-lg text-textPrimary">Telemetry: <span id="detail-id" class="font-mono ml-1">ENG-003</span></h2>
-                    <p class="text-sm mt-1" id="detail-desc">XGBoost detected anomalous vibration and temperature spikes.</p>
+                    <h2 class="font-medium text-lg text-textPrimary">Telemetry Deep Dive: <span id="detail-id" class="font-mono ml-1">ENG-003</span></h2>
+                    <p class="text-[13px] mt-1" id="detail-desc">XGBoost detected anomalous vibration and temperature spikes.</p>
                 </div>
-                <div class="px-3 py-1 text-xs font-mono rounded border" id="detail-badge">
-                    CRITICAL
+                <div class="flex flex-col items-end gap-2">
+                    <div class="px-2 py-0.5 text-[10px] font-mono rounded border" id="detail-badge">
+                        CRITICAL
+                    </div>
+                    <!-- New Interactive Actions -->
+                    <div class="flex gap-2 mt-1">
+                        <button onclick="runDiagnostics()" class="text-[11px] font-medium border border-borderSubtle px-3 py-1.5 rounded bg-bgMain hover:bg-surfaceHover text-textPrimary transition-colors">
+                            Run Diagnostics
+                        </button>
+                        <button onclick="dispatchTeam()" class="text-[11px] font-medium border border-critical bg-critical/10 hover:bg-critical/20 px-3 py-1.5 rounded text-critical transition-colors" id="action-btn">
+                            Ground Asset
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- Focus Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-bgMain p-4 rounded-lg border border-borderSubtle">
-                    <div class="text-xs mb-1">Current Cycle</div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="bg-bgMain p-4 rounded border border-borderSubtle">
+                    <div class="text-[11px] mb-1">Current Cycle</div>
                     <div class="text-xl font-mono text-textPrimary" id="cycle-count">198</div>
                 </div>
-                <div class="bg-bgMain p-4 rounded-lg border border-borderSubtle">
-                    <div class="text-xs mb-1">Health Status</div>
+                <div class="bg-bgMain p-4 rounded border border-borderSubtle">
+                    <div class="text-[11px] mb-1">Health Status</div>
                     <div class="text-xl font-mono font-medium" id="health-status">CRITICAL</div>
                 </div>
-                <div class="bg-bgMain p-4 rounded-lg border border-borderSubtle col-span-2">
-                    <div class="text-xs mb-1">Recommendation</div>
-                    <div class="text-sm font-medium text-textPrimary mt-1" id="recommendation">Ground aircraft immediately.</div>
+                <div class="bg-bgMain p-4 rounded border border-borderSubtle col-span-2">
+                    <div class="text-[11px] mb-1">System Recommendation</div>
+                    <div class="text-[13px] font-medium text-textPrimary mt-1" id="recommendation">Ground aircraft immediately.</div>
+                </div>
+            </div>
+
+            <!-- Additional Metrics Row -->
+            <div class="grid grid-cols-3 gap-3 border-t border-borderSubtle pt-4">
+                <div>
+                    <div class="text-[10px] font-mono text-textSecondary">LATENCY (ms)</div>
+                    <div class="text-sm font-mono text-textPrimary mt-1" id="latency-val">42</div>
+                </div>
+                <div>
+                    <div class="text-[10px] font-mono text-textSecondary">THROUGHPUT (kb/s)</div>
+                    <div class="text-sm font-mono text-textPrimary mt-1" id="throughput-val">124.5</div>
+                </div>
+                <div>
+                    <div class="text-[10px] font-mono text-textSecondary">CONFIDENCE</div>
+                    <div class="text-sm font-mono text-textPrimary mt-1">94.2%</div>
                 </div>
             </div>
 
             <!-- Live Charts -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                 <div class="space-y-2">
                     <div class="flex justify-between items-end">
-                        <div class="text-xs">Sensor 2: LPC Temp (°R)</div>
-                        <div class="text-sm font-mono text-textPrimary" id="metric-1">644.21</div>
+                        <div class="text-[11px] uppercase tracking-wider text-textSecondary font-medium">Sensor 2: LPC Temp (°R)</div>
+                        <div class="text-xs font-mono text-textPrimary" id="metric-1">644.21</div>
                     </div>
-                    <div class="chart-container bg-bgMain border border-borderSubtle p-2 rounded" id="chart-1"></div>
+                    <div class="chart-container bg-bgMain border border-borderSubtle p-1.5 rounded" id="chart-1"></div>
                 </div>
 
                 <div class="space-y-2">
                     <div class="flex justify-between items-end">
-                        <div class="text-xs">Sensor 7: HPC Pressure (psia)</div>
-                        <div class="text-sm font-mono text-textPrimary" id="metric-2">1390.10</div>
+                        <div class="text-[11px] uppercase tracking-wider text-textSecondary font-medium">Sensor 7: HPC Pressure (psia)</div>
+                        <div class="text-xs font-mono text-textPrimary" id="metric-2">1390.10</div>
                     </div>
-                    <div class="chart-container bg-bgMain border border-borderSubtle p-2 rounded" id="chart-2"></div>
+                    <div class="chart-container bg-bgMain border border-borderSubtle p-1.5 rounded" id="chart-2"></div>
                 </div>
             </div>
 
             <!-- Terminal Log -->
-            <div class="mt-auto pt-6">
-                <div class="bg-bgMain rounded-lg p-4 border border-borderSubtle">
-                    <div class="text-xs font-mono mb-2 border-b border-borderSubtle pb-2 flex justify-between">
+            <div class="mt-auto pt-4 border-t border-borderSubtle">
+                <div class="bg-bgMain rounded p-3 border border-borderSubtle">
+                    <div class="text-[10px] font-mono mb-2 border-b border-borderSubtle pb-2 flex justify-between">
                         <span>RAW TCP STREAM</span>
                         <span id="log-eng-id">ENG-003</span>
                     </div>
-                    <div class="logs h-24 overflow-y-auto font-mono text-[11px] space-y-1" id="log-container">
+                    <div class="logs h-20 overflow-y-auto font-mono text-[10px] space-y-1" id="log-container">
                         <!-- JS logs -->
                     </div>
                 </div>
@@ -151,6 +192,9 @@
 
         </div>
     </main>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 flex flex-col gap-2 z-50"></div>
 
     <script>
         // Data State
@@ -162,7 +206,6 @@
         ];
 
         let selectedId = 'ENG-003';
-        let intervals = {};
 
         // DOM Elements
         const engineListEl = document.getElementById('engine-list');
@@ -172,12 +215,16 @@
         const cycleCountEl = document.getElementById('cycle-count');
         const healthStatusEl = document.getElementById('health-status');
         const recEl = document.getElementById('recommendation');
+        const actionBtnEl = document.getElementById('action-btn');
         const metric1El = document.getElementById('metric-1');
         const metric2El = document.getElementById('metric-2');
         const chart1El = document.getElementById('chart-1');
         const chart2El = document.getElementById('chart-2');
         const logContainerEl = document.getElementById('log-container');
         const logEngIdEl = document.getElementById('log-eng-id');
+        const latEl = document.getElementById('latency-val');
+        const thrEl = document.getElementById('throughput-val');
+        const toastContainer = document.getElementById('toast-container');
 
         function getStatusColor(status) {
             if (status === 'Critical') return 'text-critical';
@@ -191,6 +238,44 @@
             return 'bg-healthy/10 border-healthy/30';
         }
 
+        // Action Functions
+        function showToast(message, type="info") {
+            const toast = document.createElement('div');
+            const color = type === "error" ? "border-critical bg-critical/10 text-critical" : "border-borderSubtle bg-surface text-textPrimary";
+            toast.className = `px-4 py-3 rounded border ${color} shadow-lg text-[13px] font-medium toast-enter flex items-center gap-2`;
+            toast.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${type === "error" ? "bg-critical" : "bg-accent"}"></span> ${message}`;
+            toastContainer.appendChild(toast);
+            
+            requestAnimationFrame(() => {
+                toast.classList.add('toast-active');
+            });
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function runDiagnostics() {
+            showToast(`Diagnostics initiated for ${selectedId}...`);
+            setTimeout(() => {
+                showToast(`Diagnostics complete. Model confidence: 94.2%`);
+            }, 1500);
+        }
+
+        function dispatchTeam() {
+            const eng = engines.find(e => e.id === selectedId);
+            if(eng.status === 'Critical') {
+                showToast(`EMERGENCY COMMAND SENT: Asset ${selectedId} grounded.`, "error");
+            } else {
+                showToast(`Maintenance team scheduled for ${selectedId}.`);
+            }
+        }
+
+        function refreshData() {
+            showToast("Force syncing telemetry streams...");
+        }
+
         // Render Left List
         function renderEngineList() {
             engineListEl.innerHTML = '';
@@ -199,16 +284,16 @@
                 const statusColor = getStatusColor(eng.status);
                 
                 const el = document.createElement('div');
-                el.className = `engine-card p-3 rounded-lg border ${isActive ? 'active' : 'border-borderSubtle bg-bgMain hover:bg-surfaceHover'} cursor-pointer flex justify-between items-center`;
+                el.className = `engine-card p-3 rounded border ${isActive ? 'active' : 'border-borderSubtle bg-bgMain hover:bg-surfaceHover'} cursor-pointer flex justify-between items-center`;
                 el.onclick = () => selectEngine(eng.id);
 
                 el.innerHTML = `
                     <div>
-                        <div class="font-mono text-sm ${isActive ? 'text-textPrimary' : ''}">${eng.id}</div>
-                        <div class="text-[11px] mt-0.5">${eng.model}</div>
+                        <div class="font-mono text-[13px] ${isActive ? 'text-textPrimary font-medium' : ''}">${eng.id}</div>
+                        <div class="text-[11px] mt-0.5 text-textSecondary">${eng.model}</div>
                     </div>
                     <div class="text-right">
-                        <div class="font-mono font-medium text-base ${statusColor}" id="list-rul-${eng.id}">${eng.rul}</div>
+                        <div class="font-mono font-medium text-[15px] ${statusColor}" id="list-rul-${eng.id}">${eng.rul}</div>
                         <div class="text-[9px] uppercase ${statusColor}">RUL</div>
                     </div>
                 `;
@@ -227,9 +312,17 @@
             detailIdEl.innerText = eng.id;
             detailDescEl.innerText = eng.desc;
             
-            // Update Badge
+            // Update Badge & Button
             detailBadgeEl.className = `px-2 py-0.5 text-[10px] font-mono rounded border ${getStatusBg(eng.status)} ${getStatusColor(eng.status)}`;
             detailBadgeEl.innerText = eng.status.toUpperCase();
+            
+            if(eng.status === 'Critical') {
+                actionBtnEl.innerText = "Ground Asset";
+                actionBtnEl.className = "text-[11px] font-medium border border-critical bg-critical/10 hover:bg-critical/20 px-3 py-1.5 rounded text-critical transition-colors";
+            } else {
+                actionBtnEl.innerText = "Schedule Maintenance";
+                actionBtnEl.className = "text-[11px] font-medium border border-borderSubtle bg-surface hover:bg-surfaceHover px-3 py-1.5 rounded text-textPrimary transition-colors";
+            }
             
             // Update Focus Stats
             healthStatusEl.innerText = eng.status.toUpperCase();
@@ -243,8 +336,8 @@
             logContainerEl.innerHTML = '';
             
             for (let i = 0; i < 40; i++) {
-                chart1El.innerHTML += `<div class="bar bg-neutral-600" style="height: ${Math.random() * 20 + 40}%"></div>`;
-                chart2El.innerHTML += `<div class="bar bg-neutral-600" style="height: ${Math.random() * 20 + 40}%"></div>`;
+                chart1El.innerHTML += `<div class="bar bg-neutral-800" style="height: ${Math.random() * 20 + 40}%"></div>`;
+                chart2El.innerHTML += `<div class="bar bg-neutral-800" style="height: ${Math.random() * 20 + 40}%"></div>`;
             }
         }
 
@@ -255,24 +348,25 @@
 
             eng.cycle++;
             
-            // Variance based on health
             let varTemp = eng.status === 'Critical' ? 2.5 : 0.5;
             let varPress = eng.status === 'Critical' ? 6.0 : 1.5;
 
             const v1 = eng.baseTemp + (Math.random() * varTemp);
-            const v2 = eng.basePress - (Math.random() * varPress); // pressure drops
+            const v2 = eng.basePress - (Math.random() * varPress);
 
-            // Update UI Numbers
+            // Update UI
             metric1El.innerText = v1.toFixed(2);
             metric2El.innerText = v2.toFixed(2);
             cycleCountEl.innerText = eng.cycle;
+            latEl.innerText = Math.floor(Math.random() * 20 + 30);
+            thrEl.innerText = (120 + Math.random() * 10).toFixed(1);
 
             // Update Logs
             const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
             const logLine = document.createElement('div');
-            logLine.innerHTML = `<span class="text-neutral-500">[${timestamp}]</span> <span class="text-textPrimary">RECV</span> <span>{"id":"${eng.id}","c":${eng.cycle},"s2":${v1.toFixed(1)},"s7":${v2.toFixed(1)}}</span>`;
+            logLine.innerHTML = `<span class="text-neutral-600">[${timestamp}]</span> <span class="text-textPrimary">RECV</span> <span>{"id":"${eng.id}","c":${eng.cycle},"s2":${v1.toFixed(1)},"s7":${v2.toFixed(1)}}</span>`;
             logContainerEl.appendChild(logLine);
-            if (logContainerEl.children.length > 8) logContainerEl.removeChild(logContainerEl.firstChild);
+            if (logContainerEl.children.length > 6) logContainerEl.removeChild(logContainerEl.firstChild);
             logContainerEl.scrollTop = logContainerEl.scrollHeight;
 
             // Degrade RUL randomly
@@ -297,10 +391,9 @@
             chart2El.appendChild(b2);
         }
 
-        // Initialize
         renderEngineList();
         selectEngine(selectedId);
-        setInterval(tick, 800);
+        setInterval(tick, 1000); // 1 tick per sec is more "serious" and readable
 
     </script>
 </body>
