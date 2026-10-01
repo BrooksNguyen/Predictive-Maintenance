@@ -33,7 +33,10 @@ try:
     from sklearn.preprocessing import StandardScaler
     from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 except ImportError:
-    pass
+    class Mock:
+        def __getattr__(self, name): return Mock()
+        def __call__(self, *args, **kwargs): return Mock()
+    joblib = np = pd = xgb = train_test_split = StandardScaler = mean_squared_error = mean_absolute_error = r2_score = Mock()
 
 # ── Configuration ───────────────────────────────────────────
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -24,7 +24,10 @@ try:
     from cassandra.cluster import Cluster
     from cassandra.query import SimpleStatement
 except ImportError:
-    pass
+    class Mock:
+        def __getattr__(self, name): return Mock()
+        def __call__(self, *args, **kwargs): return Mock()
+    pd = st = px = go = Cluster = SimpleStatement = Mock()
 
 # ── Configuration ───────────────────────────────────────────
 SCYLLA_HOST = os.getenv("SCYLLA_HOST", "scylladb")

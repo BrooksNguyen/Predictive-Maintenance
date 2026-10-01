@@ -23,7 +23,10 @@ try:
     from cassandra.cluster import Cluster as CassandraCluster
     from cassandra.query import SimpleStatement
 except ImportError:
-    pass
+    class Mock:
+        def __getattr__(self, name): return Mock()
+        def __call__(self, *args, **kwargs): return Mock()
+    pd = SparkSession = col = split = DoubleType = IntegerType = CassandraCluster = SimpleStatement = Mock()
 
 # ── Configuration (injected via Docker env vars) ───────────
 SPARK_MASTER = os.getenv("SPARK_MASTER_URL", "spark://spark-master:7077")

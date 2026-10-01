@@ -25,7 +25,10 @@ try:
     import pandas as pd
     from cassandra.cluster import Cluster
 except ImportError:
-    pass
+    class Mock:
+        def __getattr__(self, name): return Mock()
+        def __call__(self, *args, **kwargs): return Mock()
+    joblib = np = pd = Cluster = Mock()
 from cassandra.query import SimpleStatement
 
 # ── Configuration ───────────────────────────────────────────
