@@ -54,8 +54,8 @@ def serve(host: str, port: int, rows: list[str]) -> None:
                 conn.sendall(message.encode("utf-8"))
                 log.info("→  %s", row)
                 time.sleep(SEND_INTERVAL)
-        except (BrokenPipeError, ConnectionResetError):
-            log.warning("Client disconnected — waiting for reconnection …")
+        except (BrokenPipeError, ConnectionResetError, socket.error) as e:
+            log.warning("Client disconnected (%s) — waiting for reconnection …", e)
         finally:
             conn.close()
 

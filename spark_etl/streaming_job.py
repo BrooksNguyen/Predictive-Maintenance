@@ -52,13 +52,24 @@ ACTIVE_SENSORS = [
 _cass_session = None
 
 
+import time
+
 def get_cassandra_session():
-    """Get or create a direct cassandra-driver session (for rolling features)."""
+    """Get or create a direct cassandra-driver session (for rolling features) with retries."""
     global _cass_session
     if _cass_session is None:
-        cluster = CassandraCluster([SCYLLA_HOST], port=int(SCYLLA_PORT))
-        _cass_session = cluster.connect(SCYLLA_KEYSPACE)
-        log.info("Cassandra direct session created for feature computation")
+        retries = 10
+        for i in range(retries):
+            try:
+                cluster = CassandraCluster([SCYLLA_HOST], port=int(SCYLLA_PORT))
+                _cass_session = cluster.connect(SCYLLA_KEYSPACE)
+                log.info("Cassandra direct session created for feature computation")
+                break
+            except Exception as e:
+                log.warning("Cassandra connection failed (attempt %d/%d): %s", i+1, retries, e)
+                time.sleep(5)
+        if _cass_session is None:
+            raise RuntimeError("Could not connect to Cassandra after retries.")
     return _cass_session
 
 

@@ -74,9 +74,15 @@ st.set_page_config(
 
 @st.cache_resource
 def get_session():
-    """Create and cache a ScyllaDB session."""
-    cluster = Cluster(contact_points=[SCYLLA_HOST], port=SCYLLA_PORT)
-    return cluster.connect(SCYLLA_KEYSPACE)
+    """Create and cache a ScyllaDB session with retries."""
+    for attempt in range(15):
+        try:
+            cluster = Cluster(contact_points=[SCYLLA_HOST], port=SCYLLA_PORT)
+            return cluster.connect(SCYLLA_KEYSPACE)
+        except Exception as e:
+            time.sleep(2)
+    st.error("Failed to connect to ScyllaDB. Please check if the container is running.")
+    st.stop()
 
 
 # ── Data Fetching ──────────────────────────────────────────
