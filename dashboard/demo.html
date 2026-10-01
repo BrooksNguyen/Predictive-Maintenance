@@ -199,19 +199,19 @@
                 const statusColor = getStatusColor(eng.status);
                 
                 const el = document.createElement('div');
-                el.className = \`engine-card p-3 rounded-lg border \${isActive ? 'active' : 'border-borderSubtle bg-bgMain hover:bg-surfaceHover'} cursor-pointer flex justify-between items-center\`;
+                el.className = `engine-card p-3 rounded-lg border ${isActive ? 'active' : 'border-borderSubtle bg-bgMain hover:bg-surfaceHover'} cursor-pointer flex justify-between items-center`;
                 el.onclick = () => selectEngine(eng.id);
 
-                el.innerHTML = \`
+                el.innerHTML = `
                     <div>
-                        <div class="font-mono text-sm \${isActive ? 'text-textPrimary' : ''}">\${eng.id}</div>
-                        <div class="text-[11px] mt-0.5">\${eng.model}</div>
+                        <div class="font-mono text-sm ${isActive ? 'text-textPrimary' : ''}">${eng.id}</div>
+                        <div class="text-[11px] mt-0.5">${eng.model}</div>
                     </div>
                     <div class="text-right">
-                        <div class="font-mono font-medium text-base \${statusColor}" id="list-rul-\${eng.id}">\${eng.rul}</div>
-                        <div class="text-[9px] uppercase \${statusColor}">RUL</div>
+                        <div class="font-mono font-medium text-base ${statusColor}" id="list-rul-${eng.id}">${eng.rul}</div>
+                        <div class="text-[9px] uppercase ${statusColor}">RUL</div>
                     </div>
-                \`;
+                `;
                 engineListEl.appendChild(el);
             });
         }
@@ -228,12 +228,12 @@
             detailDescEl.innerText = eng.desc;
             
             // Update Badge
-            detailBadgeEl.className = \`px-2 py-0.5 text-[10px] font-mono rounded border \${getStatusBg(eng.status)} \${getStatusColor(eng.status)}\`;
+            detailBadgeEl.className = `px-2 py-0.5 text-[10px] font-mono rounded border ${getStatusBg(eng.status)} ${getStatusColor(eng.status)}`;
             detailBadgeEl.innerText = eng.status.toUpperCase();
             
             // Update Focus Stats
             healthStatusEl.innerText = eng.status.toUpperCase();
-            healthStatusEl.className = \`text-xl font-mono font-medium \${getStatusColor(eng.status)}\`;
+            healthStatusEl.className = `text-xl font-mono font-medium ${getStatusColor(eng.status)}`;
             recEl.innerText = eng.rec;
             logEngIdEl.innerText = eng.id;
 
@@ -243,8 +243,8 @@
             logContainerEl.innerHTML = '';
             
             for (let i = 0; i < 40; i++) {
-                chart1El.innerHTML += \`<div class="bar bg-neutral-600" style="height: \${Math.random() * 20 + 40}%"></div>\`;
-                chart2El.innerHTML += \`<div class="bar bg-neutral-600" style="height: \${Math.random() * 20 + 40}%"></div>\`;
+                chart1El.innerHTML += `<div class="bar bg-neutral-600" style="height: ${Math.random() * 20 + 40}%"></div>`;
+                chart2El.innerHTML += `<div class="bar bg-neutral-600" style="height: ${Math.random() * 20 + 40}%"></div>`;
             }
         }
 
@@ -270,7 +270,7 @@
             // Update Logs
             const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
             const logLine = document.createElement('div');
-            logLine.innerHTML = \`<span class="text-neutral-500">[\${timestamp}]</span> <span class="text-textPrimary">RECV</span> <span>{"id":"\${eng.id}","c":\${eng.cycle},"s2":\${v1.toFixed(1)},"s7":\${v2.toFixed(1)}}</span>\`;
+            logLine.innerHTML = `<span class="text-neutral-500">[${timestamp}]</span> <span class="text-textPrimary">RECV</span> <span>{"id":"${eng.id}","c":${eng.cycle},"s2":${v1.toFixed(1)},"s7":${v2.toFixed(1)}}</span>`;
             logContainerEl.appendChild(logLine);
             if (logContainerEl.children.length > 8) logContainerEl.removeChild(logContainerEl.firstChild);
             logContainerEl.scrollTop = logContainerEl.scrollHeight;
@@ -278,7 +278,7 @@
             // Degrade RUL randomly
             if (Math.random() > 0.8 && eng.rul > 0) {
                 eng.rul -= 1;
-                document.getElementById(\`list-rul-\${eng.id}\`).innerText = eng.rul;
+                document.getElementById(`list-rul-${eng.id}`).innerText = eng.rul;
             }
 
             // Update Charts
@@ -286,14 +286,14 @@
             
             chart1El.removeChild(chart1El.firstChild);
             const b1 = document.createElement('div');
-            b1.className = \`bar \${chartColor} opacity-70\`;
-            b1.style.height = \`\${((v1 - 580) / 70) * 100}%\`; 
+            b1.className = `bar ${chartColor} opacity-70`;
+            b1.style.height = `${((v1 - 580) / 70) * 100}%`; 
             chart1El.appendChild(b1);
 
             chart2El.removeChild(chart2El.firstChild);
             const b2 = document.createElement('div');
-            b2.className = \`bar \${chartColor} opacity-70\`;
-            b2.style.height = \`\${((v2 - 1380) / 120) * 100}%\`; 
+            b2.className = `bar ${chartColor} opacity-70`;
+            b2.style.height = `${((v2 - 1380) / 120) * 100}%`; 
             chart2El.appendChild(b2);
         }
 
