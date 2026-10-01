@@ -15,62 +15,52 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        bgDark: '#09090b', // zinc-950
-                        surface: '#18181b', // zinc-900
-                        borderSoft: '#27272a', // zinc-800
-                        textMuted: '#a1a1aa', // zinc-400
-                        textBright: '#f4f4f5', // zinc-100
-                        accent: '#2dd4bf', // teal-400 (soft, pleasing data color)
+                        base: '#050505',
+                        surface: '#0f0e0d',
+                        surface2: '#1a1816',
+                        edge: '#2d2926',
+                        silver: '#e5e5ea',
+                        copper: '#b5937a',
                     },
                     animation: {
                         'slide-up': 'slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     },
                     keyframes: {
-                        slideUp: { '0%': { opacity: '0', transform: 'translateY(15px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
                     }
                 }
             }
         }
     </script>
-    <style>
-        body {
-            background-color: theme('colors.bgDark');
-            color: theme('colors.textMuted');
-            -webkit-font-smoothing: antialiased;
-        }
-        .text-gradient {
-            background: linear-gradient(135deg, #f4f4f5 0%, #a1a1aa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .soft-glass {
-            background: rgba(24, 24, 27, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-gradient {
+                background: linear-gradient(135deg, #ffffff 0%, #b5937a 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-start min-h-screen pt-24 pb-32 px-6">
+<body class="bg-base text-silver flex flex-col items-center justify-start min-h-screen pt-24 pb-32 px-6 antialiased">
 
     <!-- Hero -->
     <header class="w-full max-w-4xl text-center space-y-8 opacity-0 animate-slide-up">
-        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-borderSoft bg-surface/50 text-xs font-medium text-accent tracking-widest">
+        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-edge bg-surface text-xs font-medium text-copper uppercase tracking-widest">
             A Data Engineering Portfolio Project
         </div>
-        <h1 class="text-5xl md:text-6xl font-medium tracking-tight text-gradient leading-tight">
-            Predictive Maintenance
+        <h1 class="text-5xl md:text-7xl font-semibold tracking-tighter text-gradient">
+            Predictive Maintenance.
         </h1>
-        <p class="text-lg md:text-xl text-textMuted font-light max-w-2xl mx-auto leading-relaxed">
+        <p class="text-xl text-gray-400 font-light max-w-2xl mx-auto leading-relaxed">
             An end-to-end industrial IoT pipeline designed to anticipate turbofan engine failure before it happens, saving millions in reactive maintenance costs.
         </p>
         
-        <div class="flex flex-col sm:flex-row gap-5 justify-center pt-8">
-            <a href="https://github.com/BrooksNguyen/Predictive-Maintenance" target="_blank" class="px-8 py-4 rounded-full bg-textBright text-bgDark font-medium hover:bg-white transition-colors shadow-lg shadow-white/5">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center pt-8">
+            <a href="https://github.com/BrooksNguyen/Predictive-Maintenance" target="_blank" class="px-8 py-4 rounded-full bg-white text-black font-medium hover:bg-gray-200 transition-colors">
                 View GitHub Repo
             </a>
-            <a href="/demo" class="px-8 py-4 rounded-full soft-glass hover:bg-surface transition-colors font-medium text-textBright">
+            <a href="/demo" class="px-8 py-4 rounded-full border border-edge bg-surface hover:bg-surface2 transition-colors font-medium text-white">
                 Live Visual Demo
             </a>
         </div>
@@ -79,75 +69,75 @@
     <!-- The Why & What -->
     <main class="w-full max-w-4xl mt-32 space-y-24 opacity-0 animate-slide-up" style="animation-delay: 0.2s;">
         
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-16">
             <div class="space-y-4">
-                <div class="text-xs font-mono text-accent uppercase tracking-widest">The Problem</div>
-                <h3 class="text-2xl font-medium text-textBright tracking-tight">Why Predictive Maintenance?</h3>
-                <p class="font-light leading-relaxed">
+                <h2 class="text-xs font-mono text-copper uppercase tracking-widest">The Problem</h2>
+                <h3 class="text-2xl font-medium text-white">Why Predictive Maintenance?</h3>
+                <p class="text-gray-400 font-light leading-relaxed">
                     In aerospace and industrial manufacturing, unexpected equipment failure costs lives and millions of dollars. Traditional "reactive" maintenance fixes things after they break. "Preventative" maintenance replaces parts too early, wasting money. <strong>Predictive Maintenance (PdM)</strong> uses live telemetry and machine learning to predict exactly when a component will fail, maximizing its Remaining Useful Life (RUL).
                 </p>
             </div>
             <div class="space-y-4">
-                <div class="text-xs font-mono text-accent uppercase tracking-widest">The Dataset</div>
-                <h3 class="text-2xl font-medium text-textBright tracking-tight">NASA C-MAPSS</h3>
-                <p class="font-light leading-relaxed">
+                <h2 class="text-xs font-mono text-copper uppercase tracking-widest">The Dataset</h2>
+                <h3 class="text-2xl font-medium text-white">NASA C-MAPSS</h3>
+                <p class="text-gray-400 font-light leading-relaxed">
                     This project is powered by the Commercial Modular Aero-Propulsion System Simulation (C-MAPSS) dataset provided by NASA. It contains run-to-failure simulated telemetry data for turbofan engines. The engine operates normally at the start of each time series, and develops a fault at some point during the series, eventually reaching failure.
                 </p>
             </div>
         </section>
 
         <!-- Tech Architecture -->
-        <section class="space-y-12 border-t border-borderSoft pt-24">
+        <section class="space-y-12 border-t border-edge pt-24">
             <div class="text-center space-y-4">
-                <div class="text-xs font-mono text-accent uppercase tracking-widest">Architecture</div>
-                <h3 class="text-3xl font-medium text-textBright tracking-tight">The Technology Stack</h3>
-                <p class="font-light max-w-2xl mx-auto">A fully containerized microservice architecture handling everything from raw socket ingestion to machine learning inference.</p>
+                <h2 class="text-xs font-mono text-copper uppercase tracking-widest">Architecture</h2>
+                <h3 class="text-3xl font-medium text-white">The Technology Stack</h3>
+                <p class="text-gray-400 font-light max-w-2xl mx-auto">A fully containerized microservice architecture handling everything from raw socket ingestion to machine learning inference.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="p-8 rounded-2xl soft-glass space-y-3">
-                    <h4 class="text-lg font-medium text-textBright">1. IoT Simulator (Python)</h4>
-                    <p class="text-sm font-light leading-relaxed">Reads the NASA dataset and streams it row-by-row over a TCP socket, perfectly mimicking a real-time hardware sensor emitting packets over a network.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 rounded-2xl bg-surface border border-edge space-y-3">
+                    <h4 class="text-lg font-medium text-white">1. IoT Simulator (Python)</h4>
+                    <p class="text-sm text-gray-400 font-light leading-relaxed">Reads the NASA dataset and streams it row-by-row over a TCP socket, perfectly mimicking a real-time hardware sensor emitting packets over a network.</p>
                 </div>
-                <div class="p-8 rounded-2xl soft-glass space-y-3">
-                    <h4 class="text-lg font-medium text-textBright">2. PySpark Structured Streaming</h4>
-                    <p class="text-sm font-light leading-relaxed">A distributed ETL job that continuously consumes the TCP stream, applies a strict schema, and computes rolling-window statistics (mean, std) on the fly.</p>
+                <div class="p-6 rounded-2xl bg-surface border border-edge space-y-3">
+                    <h4 class="text-lg font-medium text-white">2. PySpark Structured Streaming</h4>
+                    <p class="text-sm text-gray-400 font-light leading-relaxed">A distributed ETL job that continuously consumes the TCP stream, applies a strict schema, and computes rolling-window statistics (mean, std) on the fly.</p>
                 </div>
-                <div class="p-8 rounded-2xl soft-glass space-y-3">
-                    <h4 class="text-lg font-medium text-textBright">3. ScyllaDB (NoSQL)</h4>
-                    <p class="text-sm font-light leading-relaxed">Used for its ultra-fast write performance. It stores both the raw high-frequency telemetry and the processed machine learning features.</p>
+                <div class="p-6 rounded-2xl bg-surface border border-edge space-y-3">
+                    <h4 class="text-lg font-medium text-white">3. ScyllaDB (NoSQL)</h4>
+                    <p class="text-sm text-gray-400 font-light leading-relaxed">Used for its ultra-fast write performance. It stores both the raw high-frequency telemetry and the processed machine learning features.</p>
                 </div>
-                <div class="p-8 rounded-2xl soft-glass space-y-3">
-                    <h4 class="text-lg font-medium text-textBright">4. XGBoost ML Service</h4>
-                    <p class="text-sm font-light leading-relaxed">A separate inference service that evaluates the latest data against a pre-trained XGBoost Regressor to predict the remaining cycles before failure.</p>
+                <div class="p-6 rounded-2xl bg-surface border border-edge space-y-3">
+                    <h4 class="text-lg font-medium text-white">4. XGBoost ML Service</h4>
+                    <p class="text-sm text-gray-400 font-light leading-relaxed">A separate inference service that evaluates the latest data against a pre-trained XGBoost Regressor to predict the remaining cycles before failure.</p>
                 </div>
             </div>
         </section>
 
         <!-- How to Use -->
-        <section class="space-y-8 border-t border-borderSoft pt-24">
-            <div class="text-xs font-mono text-accent uppercase tracking-widest">Deployment</div>
-            <h3 class="text-2xl font-medium text-textBright tracking-tight">How to Run Locally</h3>
-            <p class="font-light leading-relaxed max-w-2xl">
+        <section class="space-y-8 border-t border-edge pt-24">
+            <h2 class="text-xs font-mono text-copper uppercase tracking-widest">Deployment</h2>
+            <h3 class="text-2xl font-medium text-white">How to Run Locally</h3>
+            <p class="text-gray-400 font-light leading-relaxed max-w-2xl">
                 Because this architecture relies on heavy distributed systems (Spark Master/Worker, ScyllaDB), the full platform cannot run directly on Vercel. You must deploy it locally using Docker Compose.
             </p>
-            <div class="soft-glass rounded-xl p-6 font-mono text-sm leading-relaxed">
-                <div class="text-zinc-500 mb-1"># Clone the repository</div>
-                <div class="text-textBright mb-5">git clone https://github.com/BrooksNguyen/Predictive-Maintenance.git<br>cd Predictive-Maintenance</div>
+            <div class="bg-surface border border-edge rounded-xl p-6 font-mono text-sm">
+                <div class="text-gray-500 mb-2"># Clone the repository</div>
+                <div class="text-white mb-4">git clone https://github.com/BrooksNguyen/Predictive-Maintenance.git<br>cd Predictive-Maintenance</div>
                 
-                <div class="text-zinc-500 mb-1"># Spin up all 7 microservices</div>
-                <div class="text-accent mb-5">docker-compose up --build -d</div>
+                <div class="text-gray-500 mb-2"># Spin up all 7 microservices</div>
+                <div class="text-copper">docker-compose up --build -d</div>
                 
-                <div class="text-zinc-500 mb-1"># Access the interactive dashboard</div>
-                <div class="text-textBright">Open http://localhost:8501 in your browser</div>
+                <div class="text-gray-500 mt-4 mb-2"># Access the interactive dashboard</div>
+                <div class="text-white">Open http://localhost:8501 in your browser</div>
             </div>
         </section>
 
     </main>
 
     <!-- Footer -->
-    <footer class="w-full max-w-4xl mt-32 pt-8 border-t border-borderSoft flex flex-col md:flex-row justify-between items-center text-sm text-zinc-600 opacity-0 animate-slide-up" style="animation-delay: 0.4s;">
-        <p>Architected & Developed by <strong class="text-zinc-400 font-medium">Brooks Nguyen</strong></p>
+    <footer class="w-full max-w-4xl mt-32 pt-8 border-t border-edge flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 opacity-0 animate-slide-up" style="animation-delay: 0.4s;">
+        <p>Architected & Developed by <strong class="text-gray-300">Brooks Nguyen</strong></p>
         <p class="mt-2 md:mt-0">© 2026. Open Source Project.</p>
     </footer>
 

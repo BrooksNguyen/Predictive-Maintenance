@@ -15,67 +15,60 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        bgDark: '#09090b',
-                        surface: '#18181b',
-                        borderSoft: '#27272a',
-                        textMuted: '#a1a1aa',
-                        textBright: '#f4f4f5',
-                        accent: '#2dd4bf', // Soft Teal
-                        accentRed: '#f87171',
+                        base: '#050505',
+                        surface: '#0f0e0d',
+                        surface2: '#1a1816',
+                        edge: '#2d2926',
+                        copper: '#b5937a',
                     }
                 }
             }
         }
     </script>
     <style>
-        body {
-            background-color: theme('colors.bgDark');
-            color: theme('colors.textBright');
-            -webkit-font-smoothing: antialiased;
-        }
-        .soft-glass {
-            background: rgba(24, 24, 27, 0.5);
+        .apple-glass {
+            background: rgba(26, 24, 22, 0.6);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(181, 147, 122, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         .chart-container {
             display: flex;
             align-items: flex-end;
             gap: 2px;
-            height: 140px;
+            height: 120px;
         }
         .bar {
             flex: 1;
-            background-color: theme('colors.accent');
-            opacity: 0.6;
+            background-color: #b5937a;
+            opacity: 0.7;
             border-radius: 2px 2px 0 0;
-            transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .logs::-webkit-scrollbar { display: none; }
         .logs { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col p-6 md:p-12">
+<body class="bg-[#050505] text-white min-h-screen flex flex-col p-6 md:p-12 antialiased">
 
     <!-- Top Navigation -->
     <nav class="flex justify-between items-center mb-12 max-w-6xl mx-auto w-full">
-        <a href="/" class="text-sm text-textMuted hover:text-textBright transition-colors flex items-center gap-2">
+        <a href="/" class="text-sm text-gray-500 hover:text-white transition-colors flex items-center gap-2">
             <span>←</span> Back to Overview
         </a>
-        <div class="text-xs font-mono text-accent tracking-widest uppercase">Visual Simulation</div>
+        <div class="text-xs font-mono text-[#b5937a] tracking-widest uppercase">Visual Simulation</div>
     </nav>
 
     <!-- Main Dashboard -->
-    <main class="flex-grow flex items-center justify-center">
-        <div class="w-full max-w-6xl soft-glass rounded-[2rem] p-8 md:p-14 flex flex-col gap-12">
+    <main class="flex-grow flex items-center justify-center max-w-6xl mx-auto w-full">
+        <div class="w-full apple-glass rounded-[2rem] p-8 md:p-14 flex flex-col gap-12">
             
-            <div class="flex justify-between items-center border-b border-borderSoft pb-6">
-                <div class="font-medium text-sm tracking-widest text-textMuted uppercase">Engine FD001 Monitor</div>
+            <div class="flex justify-between items-center border-b border-[#2d2926] pb-6">
+                <div class="font-medium text-sm tracking-widest text-[#b5937a] uppercase">Engine FD001 Monitor</div>
                 <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-accent animate-pulse shadow-[0_0_8px_rgba(45,212,191,0.6)]"></span>
-                    <span class="text-xs font-mono text-textMuted">STREAMING ACTIVE</span>
+                    <span class="w-2 h-2 rounded-full bg-[#b5937a] animate-pulse"></span>
+                    <span class="text-xs font-mono text-gray-400">STREAMING ACTIVE</span>
                 </div>
             </div>
 
@@ -84,16 +77,16 @@
                 <!-- Left: RUL & Logs -->
                 <div class="space-y-12 flex flex-col justify-between">
                     <div>
-                        <div class="text-sm text-textMuted mb-2">Remaining Useful Life (Cycles)</div>
+                        <div class="text-sm text-gray-500 mb-2">Remaining Useful Life (Cycles)</div>
                         <div class="text-8xl md:text-9xl font-light tracking-tighter tabular-nums" id="rul-value">125</div>
-                        <div class="w-full h-1.5 bg-surface mt-8 rounded-full overflow-hidden">
-                            <div id="rul-bar" class="h-full bg-accent transition-all duration-1000 ease-out" style="width: 100%;"></div>
+                        <div class="w-full h-1.5 bg-[#1a1816] mt-8 rounded-full overflow-hidden">
+                            <div id="rul-bar" class="h-full bg-[#b5937a] transition-all duration-1000 ease-out" style="width: 100%;"></div>
                         </div>
                     </div>
                     
-                    <div class="bg-bgDark/50 rounded-xl p-5 border border-borderSoft">
-                        <div class="text-xs font-mono text-textMuted mb-4 border-b border-borderSoft pb-3">TCP INGESTION [PORT 9999]</div>
-                        <div class="logs h-36 overflow-y-auto font-mono text-xs text-zinc-500 space-y-1.5" id="log-container">
+                    <div class="bg-[#0f0e0d] rounded-xl p-5 border border-[#2d2926]">
+                        <div class="text-xs font-mono text-gray-500 mb-4 border-b border-[#2d2926] pb-3">TCP INGESTION [PORT 9999]</div>
+                        <div class="logs h-36 overflow-y-auto font-mono text-xs text-gray-500 space-y-1.5" id="log-container">
                         </div>
                     </div>
                 </div>
@@ -102,16 +95,16 @@
                 <div class="space-y-10 flex flex-col justify-center">
                     <div class="space-y-4">
                         <div class="flex justify-between items-end">
-                            <div class="text-sm text-textMuted">Sensor 2: LPC Outlet Temp</div>
-                            <div class="text-xl font-mono tabular-nums text-textBright" id="metric-1">642.15</div>
+                            <div class="text-sm text-gray-500">Sensor 2: LPC Outlet Temp</div>
+                            <div class="text-xl font-mono tabular-nums text-white" id="metric-1">642.15</div>
                         </div>
                         <div class="chart-container" id="chart-1"></div>
                     </div>
 
                     <div class="space-y-4">
                         <div class="flex justify-between items-end">
-                            <div class="text-sm text-textMuted">Sensor 7: HPC Outlet Pressure</div>
-                            <div class="text-xl font-mono tabular-nums text-textBright" id="metric-2">1401.30</div>
+                            <div class="text-sm text-gray-500">Sensor 7: HPC Outlet Pressure</div>
+                            <div class="text-xl font-mono tabular-nums text-white" id="metric-2">1401.30</div>
                         </div>
                         <div class="chart-container" id="chart-2"></div>
                     </div>
@@ -149,7 +142,7 @@
 
             const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
             const logLine = document.createElement('div');
-            logLine.innerHTML = `<span class="text-accent/70">[${timestamp}]</span> <span class="text-zinc-600">RECV</span> <span class="text-zinc-400">{"eng":1,"cycle":${cycle},"s2":${v1.toFixed(2)},"s7":${v2.toFixed(2)}}</span>`;
+            logLine.innerHTML = `<span class="text-[#b5937a]">[${timestamp}]</span> <span class="text-gray-600">RECV</span> <span class="text-gray-400">{"eng":1,"cycle":${cycle},"s2":${v1.toFixed(2)},"s7":${v2.toFixed(2)}}</span>`;
             logContainer.appendChild(logLine);
             
             if (logContainer.children.length > 12) logContainer.removeChild(logContainer.firstChild);
@@ -161,11 +154,10 @@
                 const pct = (rul / 125) * 100;
                 rulBar.style.width = \`\${pct}%\`;
                 
-                // Color shift as RUL decreases
                 if (pct < 30) {
-                    rulBar.style.backgroundColor = '#f87171'; // Red
+                    rulBar.style.backgroundColor = '#ef4444'; 
                 } else if (pct < 60) {
-                    rulBar.style.backgroundColor = '#fbbf24'; // Yellow
+                    rulBar.style.backgroundColor = '#f59e0b';
                 }
             }
 
@@ -178,11 +170,10 @@
             const newBar = document.createElement('div');
             newBar.className = 'bar';
             
-            // Adjust bar color based on RUL
             if (rul < 30) {
-                newBar.style.backgroundColor = '#f87171';
+                newBar.style.backgroundColor = '#ef4444';
             } else if (rul < 60) {
-                newBar.style.backgroundColor = '#fbbf24';
+                newBar.style.backgroundColor = '#f59e0b';
             }
             
             let pct = ((val - min) / (max - min)) * 100;
