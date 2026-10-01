@@ -239,3 +239,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# ── Vercel Serverless Stub ──────────────────────────────────
+def app(environ, start_response):
+    start_response('200 OK', [('Content-Type', 'text/plain')])
+    return [b"ML Service (Vercel Stub)"]

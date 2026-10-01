@@ -64,3 +64,8 @@ if __name__ == "__main__":
     csv_rows = load_csv_rows(DATA_PATH)
     log.info("Loaded %d rows from %s", len(csv_rows), DATA_PATH)
     serve(HOST, PORT, csv_rows)
+
+# ── Vercel Serverless Stub ──────────────────────────────────
+def app(environ, start_response):
+    start_response('200 OK', [('Content-Type', 'text/plain')])
+    return [b"Simulator Service (Vercel Stub)"]

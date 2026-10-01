@@ -63,11 +63,7 @@ ACTIVE_SENSORS = [f"sensor_{i}" for i in [2, 3, 4, 7, 8, 9, 11, 12, 13, 14, 15, 
 DEFAULT_SENSORS = ["sensor_2", "sensor_3", "sensor_4", "sensor_7", "sensor_11", "sensor_12"]
 
 # ── Page Config ─────────────────────────────────────────────
-st.set_page_config(
-    page_title="IoT Predictive Maintenance — NASA Turbofan",
-    page_icon="✈️",
-    layout="wide",
-)
+# Moved to main() to allow safe Vercel WSGI imports
 
 
 # ── Database Connection ────────────────────────────────────
@@ -372,6 +368,11 @@ def render_engine_detail(session, machine_id: str, num_rows: int, selected_senso
 # ── Main ────────────────────────────────────────────────────
 
 def main():
+    st.set_page_config(
+        page_title="IoT Predictive Maintenance — NASA Turbofan",
+        page_icon="✈️",
+        layout="wide",
+    )
     session = get_session()
 
     # Header
@@ -424,6 +425,12 @@ def main():
     if auto_refresh:
         time.sleep(REFRESH_INTERVAL)
         st.rerun()
+
+# ── Vercel Serverless Stub ──────────────────────────────────
+def app(environ, start_response):
+    """Dummy WSGI app to satisfy Vercel's Python runtime requirements."""
+    start_response('200 OK', [('Content-Type', 'text/plain')])
+    return [b"Dashboard Service (Vercel Stub)"]
 
 
 if __name__ == "__main__":
